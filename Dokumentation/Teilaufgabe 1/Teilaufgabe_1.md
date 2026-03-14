@@ -17,4 +17,12 @@
 - **Anforderung**: Nach Schatzfund gegnerische Burg suchen – Nachdem der Client den eigenen Schatz gefunden hat, muss er die gegnerische Burg auf der Karte suchen und dorthin navigieren.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Sobald eine KI "ihren" Schatz gefunden bzw. aufgedeckt hat, muss sie ihre Spielfigur zu diesem bewegen, um ihn aufnehmen zu können. Danach, sobald der Schatz aufgenommen wurde, muss die KI mit ihrer Spielfigur die gegnerische Burg finden.“
+
+### Typ der Anforderung: nicht funktional
+
+**Anforderung 4**
+
+- **Anforderung**: Spielaktionen innerhalb von Zeitlimit durchführen – Der Client muss jede Spielaktion innerhalb von maximal 5 Sekunden durchführen, damit das Spiel korrekt fortgesetzt werden kann.
+- **Bezugsquelle**: Spielidee, **Zitat**
+  > „Um die Spiele für die Zuschauer spannend zu gestalten, wurde festgelegt, dass ein Spiel insgesamt nicht länger als 320 Spielaktionen (und damit 320 Runden) dauern darf. Für jede dieser rundenbasierten Spielaktion hat die KI maximal 5 Sekunden Bedenkzeit. Insgesamt dauert ein Spiel maximal 10 Minuten.“
   
