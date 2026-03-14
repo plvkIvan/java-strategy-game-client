@@ -25,4 +25,10 @@
 - **Anforderung**: Spielaktionen innerhalb von Zeitlimit durchführen – Der Client muss jede Spielaktion innerhalb von maximal 5 Sekunden durchführen, damit das Spiel korrekt fortgesetzt werden kann.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Um die Spiele für die Zuschauer spannend zu gestalten, wurde festgelegt, dass ein Spiel insgesamt nicht länger als 320 Spielaktionen (und damit 320 Runden) dauern darf. Für jede dieser rundenbasierten Spielaktion hat die KI maximal 5 Sekunden Bedenkzeit. Insgesamt dauert ein Spiel maximal 10 Minuten.“
-  
+
+**Anforderung 5**
+
+- **Anforderung**: Autonome Spielentscheidungen treffen – Der Client muss das Spiel autonom ausführen und Entscheidungen ohne menschliche Eingriffe treffen.
+- **Bezugsquelle**: Spielidee, **Zitat**
+  > „Die KI entscheidet selbst, ohne menschliches Zutun, wie hierzu am Besten vorzugehen ist.“
+
