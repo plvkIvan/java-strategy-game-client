@@ -37,3 +37,11 @@
 - **Anforderung**: Spielzustände korrekt anzeigen – Der Client muss vom Server gemeldete Gegnerpositionen auch bei ungewöhnlichen Positionsänderungen im Client-UI anzeigen.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Zufällige Position des Gegners: Bis zum Abschluss der ersten 8 eigenen Clientaktionen hat die vom Server gemeldete Position des Gegners zufällig zu sein. Dies kann zu unerwarteten Positionen und vermeintlichen Sprüngen zwischen Feldern für den Gegner führen. Zeigen Sie diese trotzdem einfach im Client-UI an.“
+
+### Typ der Anforderung: Designbedingung
+
+**Anforderung 7**
+
+- **Anforderung**: Client-Server Architektur verwenden – Das System muss eine Client-Server Architektur verwenden, bei der Clients über einen Server miteinander interagieren.
+- **Bezugsquelle**: Spielidee, **Zitat**
+  > „Die Grobarchitektur ist damit als klassische Client/Server Architektur vorgegeben.“
