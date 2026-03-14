@@ -32,3 +32,8 @@
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Die KI entscheidet selbst, ohne menschliches Zutun, wie hierzu am Besten vorzugehen ist.“
 
+**Anforderung 6**
+
+- **Anforderung**: Spielzustände korrekt anzeigen – Der Client muss vom Server gemeldete Gegnerpositionen auch bei ungewöhnlichen Positionsänderungen im Client-UI anzeigen.
+- **Bezugsquelle**: Spielidee, **Zitat**
+  > „Zufällige Position des Gegners: Bis zum Abschluss der ersten 8 eigenen Clientaktionen hat die vom Server gemeldete Position des Gegners zufällig zu sein. Dies kann zu unerwarteten Positionen und vermeintlichen Sprüngen zwischen Feldern für den Gegner führen. Zeigen Sie diese trotzdem einfach im Client-UI an.“
