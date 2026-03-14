@@ -1,3 +1,10 @@
+# Software Engineering I - Teilaufgabe 1 (Anforderungsanalyse und Planungsphase)
+
+## Abgabedokument - Teilaufgabe 1 (Anforderungsanalyse und Planungsphase)
+
+- Nachname, Vorname: Polovko Ivan
+- Matrikelnummer: 12232715
+
 ## Aufgabe 1: Anforderungsanalyse
 
 ### Typ der Anforderung: funktional
