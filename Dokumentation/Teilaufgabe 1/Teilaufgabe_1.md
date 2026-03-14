@@ -7,6 +7,17 @@
 
 ## Aufgabe 1: Anforderungsanalyse
 
+### Quellen dokumentieren - Aufgabe 1: Anforderungsanalyse
+
+- **Kurzbeschreibung der übernommenen Teile**:  
+  Die Anforderungen wurden auf Basis der bereitgestellten **Spielidee** des Übungsprojekts erstellt. Aus diesem Dokument wurden zentrale Inhalte analysiert und daraus mehrere funktionale und nichtfunktionale Anforderungen sowie eine Designbedingung abgeleitet.  
+  Übernommen wurden die grundlegenden **Ideen und Spielmechaniken** (z. B. Bewegung über die Karte, Finden des Schatzes, Zeitlimit der Aktionen, Client-Server Architektur).
+
+- **Quellen der übernommenen Teile**:
+  - Dokument **„Spielidee“** aus den Unterlagen der Lehrveranstaltung
+  - Kursmaterialien / Repository der Lehrveranstaltung Software Engineering
+  - Vorlage und Aufgabenbeschreibung im GitLab-Repository
+
 ### Typ der Anforderung: funktional
 
 - **Anforderung**: Karte erkunden und eigenen Schatz finden – Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden.
