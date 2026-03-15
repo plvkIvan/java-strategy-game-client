@@ -67,6 +67,11 @@
 
 ## Aufgabe 2: Anforderungsdokumentation
 
+### Quellen dokumentieren - Aufgabe 2: Anforderungsdokumentation
+
+- **Kurzbeschreibung der übernommenen Teile**: Inhalte basieren auf der in Aufgabe 1 ausgewählten funktionalen Anforderung „Client muss die Karte erkunden, um den eigenen Schatz zu finden“. Übernommen wurden zentrale Inhalte aus der "Spielidee".
+- **Quellen der übernommenen Teile**: Spielidee, Netzwerkprotokoll, eigene Ausarbeitung aus Aufgabe 1, Vorlage.md im GitLab-Repository.
+
 - **Name**: Karte erkunden und eigenen Schatz finden
 - **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
 - **Priorität: Hoch**
