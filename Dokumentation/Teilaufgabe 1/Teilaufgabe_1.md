@@ -114,3 +114,31 @@
 - Weitere Kartenfelder wurden potenziell aufgedeckt.
 - Der Client besitzt mehr Informationen über die Spielkarte als zuvor.
 - Die Suche nach dem eigenen Schatz wurde fortgesetzt.
+
+### Impuls/Ergebnis - Alternativszenario
+
+**Vorbedingungen:**
+
+- Der Client wurde gestartet und erfolgreich beim Server registriert.
+- Die eigene Kartenhälfte wurde bereits erzeugt und an den Server übertragen.
+- Das Spiel läuft und der Client hat den eigenen Schatz noch nicht gefunden.
+- Der Client ist laut Spielstatus an der Reihe.
+
+**Hauptsächlicher Ablauf:**
+
+1. **Impuls**: Der Client fragt den aktuellen Spielstatus beim Server ab.
+  - **Ergebnis**: Der Server liefert den aktuellen Spielzustand mit den bereits bekannten Karteninformationen zurück.
+2. **Impuls**: Der Client aktualisiert den internen Spielzustand.
+  - **Ergebnis**: Die bekannten Informationen über Karte und Position sind aktuell.
+3. **Impuls**: Der Client analysiert die Umgebung und stellt fest, dass mehrere mögliche Bewegungen zur weiteren Erkundung geeignet sind.
+  - **Ergebnis**: Der Client wählt eine alternative gültige Bewegungsrichtung, um andere bislang unbekannte Felder aufzudecken.
+4. **Impuls**: Der Client sendet die alternative Bewegung an den Server.
+  - **Ergebnis**: Der Spielverlauf wird fortgesetzt, obwohl nicht der zuvor bevorzugte Weg gewählt wurde.
+
+**Nachbedingungen:**
+
+- Die Karte wurde weiterhin erkundet.
+- Der Client hat trotz alternativer Routenwahl neue Informationen gesammelt.
+- Die Schatzsuche bleibt aktiv und wird mit angepasster Strategie fortgeführt.
+
+
