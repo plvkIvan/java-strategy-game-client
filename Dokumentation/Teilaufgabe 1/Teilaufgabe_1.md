@@ -20,11 +20,13 @@
 
 ### Typ der Anforderung: funktional
 
-- **Anforderung**: Karte erkunden und eigenen Schatz finden – Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden.
+**Anforderung 1**
+
+- **Anforderung**: Karte erkunden und eigenen Schatz finden – Der Client muss seine Spielfigur über die Spielkarte bewegen, um Kartenfelder aufzudecken und den eigenen Schatz zu finden.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Um den Schatz zu finden, bewegen beide KIs ihre Spielfigur über die Karte und decken dabei mit ihrer Spielfigur schrittweise Kartenfelder auf.”
 
-  **Anforderung 2**
+**Anforderung 2**
 
 - **Anforderung**: Kartenhälfte erzeugen und an Server senden – Der Client muss eine eigene Kartenhälfte erzeugen und diese an den Server übertragen, damit die vollständige Spielkarte erstellt werden kann.
 - **Bezugsquelle**: Spielidee, **Zitat**
@@ -32,7 +34,7 @@
 
 **Anforderung 3**
 
-- **Anforderung**: Nach Schatzfund gegnerische Burg suchen – Nachdem der Client den eigenen Schatz gefunden hat, muss er die gegnerische Burg auf der Karte suchen und dorthin navigieren.
+- **Anforderung**: Gegnerische Burg nach Schatzfund suchen – - **Anforderung**: Der Client muss nach dem Finden des eigenen Schatzes die gegnerische Burg auf der Karte suchen und dorthin navigieren.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Sobald eine KI "ihren" Schatz gefunden bzw. aufgedeckt hat, muss sie ihre Spielfigur zu diesem bewegen, um ihn aufnehmen zu können. Danach, sobald der Schatz aufgenommen wurde, muss die KI mit ihrer Spielfigur die gegnerische Burg finden.“
 
@@ -52,7 +54,7 @@
 
 **Anforderung 6**
 
-- **Anforderung**: Spielzustände korrekt anzeigen – Der Client muss vom Server gemeldete Gegnerpositionen auch bei ungewöhnlichen Positionsänderungen im Client-UI anzeigen.
+- **Anforderung**: Gegnerposition im Client-UI anzeigen – Der Client muss vom Server gemeldete Gegnerpositionen auch bei ungewöhnlichen Positionsänderungen im Client-UI anzeigen.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Zufällige Position des Gegners: Bis zum Abschluss der ersten 8 eigenen Clientaktionen hat die vom Server gemeldete Position des Gegners zufällig zu sein. Dies kann zu unerwarteten Positionen und vermeintlichen Sprüngen zwischen Feldern für den Gegner führen. Zeigen Sie diese trotzdem einfach im Client-UI an.“
 
@@ -209,6 +211,7 @@ Allgemeine Informationen:
 - **Schnittstelle Spielstatus:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Abrufen des aktuellen Spielzustands. Dabei werden unter anderem Informationen über bekannte Kartenfelder, Positionen und den aktuellen Spielfortschritt vom Server an den Client übertragen.
 
 - **Schnittstelle Bewegungen:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Übertragen einer einzelnen Bewegungsaktion an den Server. Übertragen werden Spiel-ID, Spielerzuordnung und die berechnete Bewegungsrichtung; der Server verarbeitet diese Aktion gemäß Spielregeln und aktualisiert den Spielzustand.
+
 
 ## Aufgabe 3: Architektur entwerfen, modellieren und validieren
 
