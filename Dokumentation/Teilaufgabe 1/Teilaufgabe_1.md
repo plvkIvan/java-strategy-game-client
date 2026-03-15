@@ -14,9 +14,9 @@
   Übernommen wurden die grundlegenden **Ideen und Spielmechaniken** (z. B. Bewegung über die Karte, Finden des Schatzes, Zeitlimit der Aktionen, Client-Server Architektur).
 
 - **Quellen der übernommenen Teile**:
-  - Dokument **„Spielidee“** aus den Unterlagen der Lehrveranstaltung
-  - Kursmaterialien / Repository der Lehrveranstaltung Software Engineering
-  - Vorlage und Aufgabenbeschreibung im GitLab-Repository
+  - **Spielidee**
+  - **Netzwerkprotokoll**
+  - **Vorlage.md im GitLab-Repository**
 
 ### Typ der Anforderung: funktional
 
@@ -70,7 +70,12 @@
 ### Quellen dokumentieren - Aufgabe 2: Anforderungsdokumentation
 
 - **Kurzbeschreibung der übernommenen Teile**: Inhalte basieren auf der in Aufgabe 1 ausgewählten funktionalen Anforderung „Client muss die Karte erkunden, um den eigenen Schatz zu finden“. Übernommen wurden zentrale Inhalte aus der "Spielidee".
-- **Quellen der übernommenen Teile**: Spielidee, Netzwerkprotokoll, eigene Ausarbeitung aus Aufgabe 1, Vorlage.md im GitLab-Repository.
+- **Quellen der übernommenen Teile**:
+  - **Spielidee**
+  - **Netzwerkprotokoll**
+  - **eigene Ausarbeitung aus Aufgabe 1**
+  - **Vorlage.md im GitLab-Repository**
+
 
 - **Name**: Karte erkunden und eigenen Schatz finden
 - **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
@@ -206,6 +211,18 @@ Allgemeine Informationen:
 - **Schnittstelle Bewegungen:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Übertragen einer einzelnen Bewegungsaktion an den Server. Übertragen werden Spiel-ID, Spielerzuordnung und die berechnete Bewegungsrichtung; der Server verarbeitet diese Aktion gemäß Spielregeln und aktualisiert den Spielzustand.
 
 ## Aufgabe 3: Architektur entwerfen, modellieren und validieren
+
+### Quellen dokumentieren - Aufgabe 3: Architektur entwerfen, modellieren und validieren
+
+- **Kurzbeschreibung der übernommenen Teile**:  
+  Das UML-Klassendiagramm sowie die beiden UML-Sequenzdiagramme wurden auf Basis der bereitgestellten **Spielidee**, des **Netzwerkprotokolls** und der Unterlagen **„Software Engineering 1 Architektur Tipps und Tricks“** erstellt.   
+  Zusätzlich wurden die in der Lehrveranstaltung bereitgestellten **BeispielKlassendiagramm und BeispielSequenzdiagramm** als stilistische und strukturelle Orientierung verwendet. 
+
+- **Quellen der übernommenen Teile**:
+  - **Spielidee**
+  - **Netzwerkprotokoll**
+  - **Software Engineering I Architektur Tipps und Tricks**
+  - **BeispielKlassendiagramm und BeispielSequenzdiagramm** aus den Angabe und Materialien Teilaufgabe 1 - Analyse & Entwurf 
 
 ### Klassendiagramm
 
