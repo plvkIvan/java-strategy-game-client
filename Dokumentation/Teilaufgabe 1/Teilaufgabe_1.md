@@ -78,6 +78,7 @@
   - **eigene Ausarbeitung aus Aufgabe 1**
   - **Vorlage.md im GitLab-Repository**
 
+### Anforderungsüberblick
 
 - **Name**: Karte erkunden und eigenen Schatz finden
 - **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
@@ -90,7 +91,7 @@
   - **Client muss autonom ohne menschliches Eingreifen arbeiten**: Die Erkundung der Karte muss vollständig durch die Client-KI geplant und ausgeführt werden.
   - **Client muss Spielzustände korrekt anzeigen**: Die bei der Erkundung gewonnenen Informationen müssen korrekt im Client-UI dargestellt werden.
   - 
-    ### Relevante Business Rules**:
+    ### Relevante Business Rules:
   - Die Spielfigur darf sich nur gemäß der Spielregeln über die Karte bewegen.
   - Durch Bewegungen werden Kartenfelder schrittweise aufgedeckt.
   - Der eigene Schatz befindet sich auf der eigenen Kartenhälfte und kann nur vom jeweiligen Client gefunden und aufgenommen werden.
