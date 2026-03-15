@@ -192,3 +192,10 @@ P - Position des Spielers
 Allgemeine Informationen:
 - Schatz bislang nicht gefunden
 - Ziel: verbleibende Felder erkunden
+```
+
+### Externe Schnittstellen
+
+- **Schnittstelle Spielstatus:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Abrufen des aktuellen Spielzustands. Dabei werden unter anderem Informationen über bekannte Kartenfelder, Positionen und den aktuellen Spielfortschritt vom Server an den Client übertragen.
+
+- **Schnittstelle Bewegungen:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Übertragen einer einzelnen Bewegungsaktion an den Server. Übertragen werden Spiel-ID, Spielerzuordnung und die berechnete Bewegungsrichtung; der Server verarbeitet diese Aktion gemäß Spielregeln und aktualisiert den Spielzustand.
