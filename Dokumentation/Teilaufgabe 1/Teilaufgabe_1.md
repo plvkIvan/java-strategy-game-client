@@ -204,3 +204,13 @@ Allgemeine Informationen:
 - **Schnittstelle Spielstatus:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Abrufen des aktuellen Spielzustands. Dabei werden unter anderem Informationen über bekannte Kartenfelder, Positionen und den aktuellen Spielfortschritt vom Server an den Client übertragen.
 
 - **Schnittstelle Bewegungen:** Der Client verwendet die im Netzwerkprotokoll definierte Schnittstelle zum Übertragen einer einzelnen Bewegungsaktion an den Server. Übertragen werden Spiel-ID, Spielerzuordnung und die berechnete Bewegungsrichtung; der Server verarbeitet diese Aktion gemäß Spielregeln und aktualisiert den Spielzustand.
+
+## Aufgabe 3: Architektur entwerfen, modellieren und validieren
+
+### Klassendiagramm
+
+Das folgende UML-Klassendiagramm beschreibt die grundlegende Architektur des Clients.  
+Es zeigt die wichtigsten Packages, Klassen, Methoden und Beziehungen, die zur Umsetzung der zentralen Use Cases erforderlich sind.  
+Der Fokus liegt auf der Struktur des Clients, der Trennung von Verantwortlichkeiten sowie der Interaktion zwischen Spielzustand, Bewegungsplanung, Netzwerkschnittstelle, Kartendarstellung und Benutzeroberfläche.
+
+![UML-Klassendiagramm des Clients](Klassendiagramm.svg)
