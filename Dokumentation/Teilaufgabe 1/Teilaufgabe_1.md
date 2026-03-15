@@ -70,17 +70,47 @@
 - **Name**: Karte erkunden und eigenen Schatz finden
 - **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
 - **Priorität: Hoch**
-- **Relevante Anforderungen**:
+
+### Relevante Anforderungen:
   - **Client muss eine Kartenhälfte erzeugen und übertragen**: Die Karte muss zunächst korrekt erzeugt und an den Server übertragen werden, bevor sie im weiteren Spielverlauf erkundet werden kann.
   - **Client muss nach dem Finden des Schatzes die gegnerische Burg suchen**: Das Erkunden der Karte ist die Voraussetzung dafür, den eigenen Schatz zu finden und anschließend die gegnerische Burg zu suchen.
   - **Client muss Spielaktionen innerhalb einer bestimmten Zeit durchführen**: Das Erkunden der Karte erfolgt über Spielaktionen, die innerhalb des vorgegebenen Zeitlimits durchgeführt werden müssen.
   - **Client muss autonom ohne menschliches Eingreifen arbeiten**: Die Erkundung der Karte muss vollständig durch die Client-KI geplant und ausgeführt werden.
   - **Client muss Spielzustände korrekt anzeigen**: Die bei der Erkundung gewonnenen Informationen müssen korrekt im Client-UI dargestellt werden.
-- **Relevante Business Rules**:
+  - 
+    ### Relevante Business Rules**:
   - Die Spielfigur darf sich nur gemäß der Spielregeln über die Karte bewegen.
   - Durch Bewegungen werden Kartenfelder schrittweise aufgedeckt.
   - Der eigene Schatz befindet sich auf der eigenen Kartenhälfte und kann nur vom jeweiligen Client gefunden und aufgenommen werden.
   - Der Client darf nur dann eine Bewegungsaktion ausführen, wenn er laut Spielstatus an der Reihe ist.
   - Der Client muss die vom Server gelieferten Spielzustände als verbindlich behandeln.
   - Eine Spielaktion muss innerhalb der vorgegebenen Bedenkzeit durchgeführt werden.
-- 
+
+### Impuls/Ergebnis - Typisches Szenario
+
+**Vorbedingungen:**
+
+- Der Client wurde gestartet und erfolgreich beim Server registriert.
+- Die eigene Kartenhälfte wurde bereits erzeugt und an den Server übertragen.
+- Das Spiel läuft und der Client befindet sich noch in der Phase, in der der eigene Schatz nicht gefunden wurde.
+- Der Client ist laut Spielstatus an der Reihe.
+
+**Hauptsächlicher Ablauf:**
+
+1. **Impuls**: Der Client fragt den aktuellen Spielstatus beim Server ab.
+  - **Ergebnis**: Der Server liefert den aktuellen Spielzustand mit bekannten Karteninformationen und Positionsdaten zurück.
+2. **Impuls**: Der Client aktualisiert seinen internen Spielzustand anhand der empfangenen Daten.
+  - **Ergebnis**: Die bekannte Karte, die eigene Position und der aktuelle Fortschritt der Schatzsuche sind im Client aktualisiert.
+3. **Impuls**: Der Client stellt den aktuellen Spielzustand im CLI dar.
+  - **Ergebnis**: Der Anwender kann nachvollziehen, welche Felder bereits bekannt sind und wo sich die Spielfigur befindet.
+4. **Impuls**: Der Client analysiert die bekannte Karte und berechnet die nächste sinnvolle Bewegung zur weiteren Erkundung.
+  - **Ergebnis**: Eine nächste Bewegung wird bestimmt, die neue Kartenfelder aufdecken soll.
+5. **Impuls**: Der Client sendet die berechnete Bewegung an den Server.
+  - **Ergebnis**: Der Server verarbeitet die Bewegung und der Client hat einen weiteren Schritt zur Schatzsuche durchgeführt.
+
+**Nachbedingungen:**
+
+- Die Spielfigur wurde um einen Schritt bewegt.
+- Weitere Kartenfelder wurden potenziell aufgedeckt.
+- Der Client besitzt mehr Informationen über die Spielkarte als zuvor.
+- Die Suche nach dem eigenen Schatz wurde fortgesetzt.
