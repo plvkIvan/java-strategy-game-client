@@ -221,3 +221,10 @@ Das erste Sequenzdiagramm bildet den Ablauf **vom Start der Clientanwendung bis 
 Dabei werden insbesondere die Registrierung am Server, das wiederholte Abfragen des Spielstatus sowie die Prüfung der Half-Map-Phase modelliert.
 
 ![UML-Sequenzdiagramm Szenario 1](Sequenzdiagramm_1.svg)
+
+### Sequenzdiagramm 2
+
+Das zweite Sequenzdiagramm bildet den Ablauf ab, in dem **der Client am Zug ist, den Schatz noch nicht gefunden hat und die nächste Bewegung berechnet und an den Server sendet**.  
+Dabei werden das Abrufen des aktuellen Spielzustands, das Aktualisieren des internen Zustands, das Bestimmen der nächsten Bewegung über die Bewegungsplanung und die anschließende Übertragung der Bewegung dargestellt.
+
+![UML-Sequenzdiagramm Szenario 3](Sequenzdiagramm_3.svg)
