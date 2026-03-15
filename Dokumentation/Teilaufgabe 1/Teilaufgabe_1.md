@@ -63,3 +63,10 @@
 - **Anforderung**: Client-Server Architektur verwenden – Das System muss eine Client-Server Architektur verwenden, bei der Clients über einen Server miteinander interagieren.
 - **Bezugsquelle**: Spielidee, **Zitat**
   > „Die Grobarchitektur ist damit als klassische Client/Server Architektur vorgegeben.“
+
+
+## Aufgabe 2: Anforderungsdokumentation
+
+- **Name**: Karte erkunden und eigenen Schatz finden
+- **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
+- **Priorität: Hoch**
