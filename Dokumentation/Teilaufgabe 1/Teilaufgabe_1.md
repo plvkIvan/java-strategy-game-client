@@ -166,4 +166,29 @@
 - Der Client ist wieder mit dem tatsächlichen Spielzustand synchronisiert.
 - Die Schatzsuche kann mit einer korrigierten Aktion fortgesetzt werden.
 
+### Benutzergeschichten
 
+- Als **Client KI** möchte ich die Karte Schritt für Schritt erkunden, um den eigenen Schatz finden zu können.
+- Als **Client KI** möchte ich neue Karteninformationen nach jeder Bewegung auswerten, um zukünftige Bewegungen sinnvoll planen zu können.
+- Als **Anwender** möchte ich den aktuellen Erkundungsfortschritt im CLI sehen, um das Verhalten des Clients nachvollziehen zu können.
+
+### Benutzerschnittstelle
+
+- Beispielhafte CLI-Darstellung der bekannten Karte während der Schatzsuche:
+```
+Spielzustand
+
+Karte:
+? ? P ? ?
+? . . . ?
+? , . ? ?
+? ? ? ? ?
+
+Zeichenerklärung:
+P - Position des Spielers
+. - bereits besuchtes Feld
+? - noch nicht erkundetes Feld
+
+Allgemeine Informationen:
+- Schatz bislang nicht gefunden
+- Ziel: verbleibende Felder erkunden
