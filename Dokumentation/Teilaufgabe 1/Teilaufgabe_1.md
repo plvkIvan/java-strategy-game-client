@@ -214,3 +214,10 @@ Es zeigt die wichtigsten Packages, Klassen, Methoden und Beziehungen, die zur Um
 Der Fokus liegt auf der Struktur des Clients, der Trennung von Verantwortlichkeiten sowie der Interaktion zwischen Spielzustand, Bewegungsplanung, Netzwerkschnittstelle, Kartendarstellung und Benutzeroberfläche.
 
 ![UML-Klassendiagramm des Clients](Klassendiagramm.svg)
+
+### Sequenzdiagramm 1
+
+Das erste Sequenzdiagramm bildet den Ablauf **vom Start der Clientanwendung bis zu dem Zeitpunkt ab, an dem der Client erkennt, dass die Kartenhälfte gesendet werden darf**.  
+Dabei werden insbesondere die Registrierung am Server, das wiederholte Abfragen des Spielstatus sowie die Prüfung der Half-Map-Phase modelliert.
+
+![UML-Sequenzdiagramm Szenario 1](Sequenzdiagramm_1.svg)
