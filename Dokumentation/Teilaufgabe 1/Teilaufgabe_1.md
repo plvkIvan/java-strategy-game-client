@@ -141,4 +141,29 @@
 - Der Client hat trotz alternativer Routenwahl neue Informationen gesammelt.
 - Die Schatzsuche bleibt aktiv und wird mit angepasster Strategie fortgeführt.
 
+### Impuls/Ergebnis - Fehlerfall
+
+**Vorbedingungen:**
+
+- Der Client wurde gestartet und erfolgreich beim Server registriert.
+- Das Spiel läuft und der Client versucht weiterhin, den eigenen Schatz zu finden.
+- Der Client ist laut internem Zustand bereit, eine Bewegung auszuführen.
+
+**Hauptsächlicher Ablauf:**
+
+1. **Impuls**: Der Client berechnet eine Bewegung zur Erkundung der Karte.
+  - **Ergebnis**: Eine Bewegungsaktion wird vorbereitet.
+2. **Impuls**: Der Client sendet die Bewegung an den Server.
+  - **Ergebnis**: Der Server erkennt, dass die Aktion im aktuellen Zustand ungültig ist, etwa weil der Client nicht an der Reihe ist oder die Bewegung regelwidrig ist.
+3. **Impuls**: Der Server meldet einen Fehler bzw. lehnt die Aktion ab.
+  - **Ergebnis**: Der Client verarbeitet die Ablehnung und führt die fehlerhafte Bewegung nicht weiter als gültigen Spielzustand fort.
+4. **Impuls**: Der Client fordert erneut den aktuellen Spielstatus an.
+  - **Ergebnis**: Der Client synchronisiert sich wieder mit dem Serverzustand und kann auf Basis korrekter Daten eine neue Bewegung planen.
+
+**Nachbedingungen:**
+
+- Die ungültige Bewegung wurde nicht als gültiger Fortschritt übernommen.
+- Der Client ist wieder mit dem tatsächlichen Spielzustand synchronisiert.
+- Die Schatzsuche kann mit einer korrigierten Aktion fortgesetzt werden.
+
 
