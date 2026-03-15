@@ -70,3 +70,17 @@
 - **Name**: Karte erkunden und eigenen Schatz finden
 - **Beschreibung und Priorität**: Der Client muss seine Spielfigur über die Spielkarte bewegen, um schrittweise neue Kartenfelder aufzudecken und dadurch den eigenen Schatz zu finden. Die Anforderung ist zentral für den Spielverlauf, da ohne das Erkunden der Karte der Schatz nicht gefunden werden kann und der Client das Spielziel nicht weiterverfolgen kann. 
 - **Priorität: Hoch**
+- **Relevante Anforderungen**:
+  - **Client muss eine Kartenhälfte erzeugen und übertragen**: Die Karte muss zunächst korrekt erzeugt und an den Server übertragen werden, bevor sie im weiteren Spielverlauf erkundet werden kann.
+  - **Client muss nach dem Finden des Schatzes die gegnerische Burg suchen**: Das Erkunden der Karte ist die Voraussetzung dafür, den eigenen Schatz zu finden und anschließend die gegnerische Burg zu suchen.
+  - **Client muss Spielaktionen innerhalb einer bestimmten Zeit durchführen**: Das Erkunden der Karte erfolgt über Spielaktionen, die innerhalb des vorgegebenen Zeitlimits durchgeführt werden müssen.
+  - **Client muss autonom ohne menschliches Eingreifen arbeiten**: Die Erkundung der Karte muss vollständig durch die Client-KI geplant und ausgeführt werden.
+  - **Client muss Spielzustände korrekt anzeigen**: Die bei der Erkundung gewonnenen Informationen müssen korrekt im Client-UI dargestellt werden.
+- **Relevante Business Rules**:
+  - Die Spielfigur darf sich nur gemäß der Spielregeln über die Karte bewegen.
+  - Durch Bewegungen werden Kartenfelder schrittweise aufgedeckt.
+  - Der eigene Schatz befindet sich auf der eigenen Kartenhälfte und kann nur vom jeweiligen Client gefunden und aufgenommen werden.
+  - Der Client darf nur dann eine Bewegungsaktion ausführen, wenn er laut Spielstatus an der Reihe ist.
+  - Der Client muss die vom Server gelieferten Spielzustände als verbindlich behandeln.
+  - Eine Spielaktion muss innerhalb der vorgegebenen Bedenkzeit durchgeführt werden.
+- 
