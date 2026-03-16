@@ -17,7 +17,7 @@
   - **Spielidee**
   - **Netzwerkprotokoll**
   - **Vorlage.md im GitLab-Repository**
-  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Übersetzung und Formulierung von Texten aus dem Ukrainischen ins Deutsche und Englische)
+  - **[Google Translate](https://translate.google.com)** - Unterstützung bei der sprachlichen Übersetzung und Formulierung von Texten aus dem Ukrainischen ins Deutsche und Englische
 
 ### Typ der Anforderung: funktional
 
@@ -78,7 +78,7 @@
   - **Netzwerkprotokoll**
   - **eigene Ausarbeitung aus Aufgabe 1**
   - **Vorlage.md im GitLab-Repository**
-  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Formulierung der Dokumentationsabschnitte)
+  - **[Google Translate](https://translate.google.com)** - Unterstützung bei der sprachlichen Formulierung der Dokumentationsabschnitte
 
 ### Anforderungsüberblick
 
@@ -229,7 +229,9 @@ Allgemeine Informationen:
   - **Netzwerkprotokoll**
   - **Software Engineering I Architektur Tipps und Tricks**
   - **BeispielKlassendiagramm und BeispielSequenzdiagramm** aus den Angabe und Materialien Teilaufgabe 1 - Analyse & Entwurf 
-  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Übersetzung und Formulierung der Texte)
+  - **[Google Translate](https://translate.google.com)** - Unterstützung bei der sprachlichen Übersetzung und Formulierung der Texte
+  - **[Bee-Up Modelling Toolkit](https://bee-up.omilab.org/)** – Desktop-Tool zur Erstellung der UML-Diagramme 
+  - **[diagrams.net (draw.io)](https://app.diagrams.net/)** – Unterstützung beim Export und der Umwandlung den Diagrammen in das SVG-Format
 
 ### Klassendiagramm
 
