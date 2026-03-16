@@ -17,6 +17,7 @@
   - **Spielidee**
   - **Netzwerkprotokoll**
   - **Vorlage.md im GitLab-Repository**
+  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Übersetzung und Formulierung von Texten aus dem Ukrainischen ins Deutsche und Englische)
 
 ### Typ der Anforderung: funktional
 
@@ -77,6 +78,7 @@
   - **Netzwerkprotokoll**
   - **eigene Ausarbeitung aus Aufgabe 1**
   - **Vorlage.md im GitLab-Repository**
+  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Formulierung der Dokumentationsabschnitte)
 
 ### Anforderungsüberblick
 
@@ -227,6 +229,7 @@ Allgemeine Informationen:
   - **Netzwerkprotokoll**
   - **Software Engineering I Architektur Tipps und Tricks**
   - **BeispielKlassendiagramm und BeispielSequenzdiagramm** aus den Angabe und Materialien Teilaufgabe 1 - Analyse & Entwurf 
+  - **[Google Translate](https://translate.google.com)** (Unterstützung bei der sprachlichen Übersetzung und Formulierung der Texte)
 
 ### Klassendiagramm
 
