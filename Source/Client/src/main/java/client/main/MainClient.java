@@ -32,6 +32,13 @@ public class MainClient {
 	 * when and how.
 	 */
 	public static void main(String[] args) {
+
+		if (args == null || args.length < 3) {
+			System.err.println("Not enough start parameters.");
+			System.err.println("Expected: <mode> <serverBaseUrl> <gameId>");
+			return;
+		}
+
 		/*
 		 * IMPORTANT: Parsing/Handling of starting parameters.
 		 * 
@@ -107,6 +114,11 @@ public class MainClient {
 		// So calling block (which should normally be avoided) is fine.
 		// For real world projects: Check out asynchronous communication and callbacks.
 		ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
+
+		if (resultReg == null) {
+			System.err.println("Registration failed: no response from server.");
+			return;
+		}
 
 		// always check for errors, and if some are reported, at least print them to the
 		// console (logging, exceptions ... should always be preferred!)
