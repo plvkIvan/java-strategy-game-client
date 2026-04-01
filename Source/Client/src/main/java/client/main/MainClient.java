@@ -90,9 +90,9 @@ public class MainClient {
 		 * able to determine and assign related bonus points. 
 		 */
 		PlayerRegistration playerReg = new PlayerRegistration(
-				"YourFirstName",
-				"YourLastName",
-				"Your_Real_UniVie_u:account_Username");
+				"Ivan",
+				"Polovko",
+				"polovkoi98");
 		Mono<ResponseEnvelope<UniquePlayerIdentifier>> webAccess = baseWebClient
 				.method(HttpMethod.POST)
 				.uri("/" + gameId + "/players")
