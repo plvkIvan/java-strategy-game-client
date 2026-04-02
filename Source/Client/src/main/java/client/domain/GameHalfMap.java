@@ -1,6 +1,6 @@
 package client.domain;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -12,7 +12,7 @@ public class GameHalfMap {
         return mapNodes.get(position);
     }
     public void addMapNode(MapNode mapNode) {
-        mapNodes.put(mapNodes.getPosition(), mapNode);
+        mapNodes.put(mapNode.getPosition(), mapNode);
     }
 
     public int size() {
@@ -23,24 +23,24 @@ public class GameHalfMap {
         return mapNodes.values();
     }
 
-    public int countTerrainTypes(TerrainType terrainType) {
+    public long countTerrainTypes(TerrainType terrainType) {
         return mapNodes.values().stream()
-                .filter(mapNode -> mapNode.getTerrain() == terrainType).count();
+                .filter(mapNode -> mapNode.getTerrainType() == terrainType).count();
     }
 
-    public int countWalkableColumn(int x) {
+    public long countWalkableColumn(int x) {
         return mapNodes.values().stream()
                 .filter(mapNode -> mapNode.getPosition().getX() == x)
                 .filter(MapNode::isWalkable).count();
     }
 
-    public int countWalkableRow(int y) {
+    public long countWalkableRow(int y) {
         return mapNodes.values().stream()
                 .filter(mapNode -> mapNode.getPosition().getY() == y)
                 .filter(MapNode::isWalkable).count();
     }
 
-    public int countCastle() {
+    public long countCastle() {
         return mapNodes.values().stream()
                 .filter(MapNode::hasCastle).count();
     }

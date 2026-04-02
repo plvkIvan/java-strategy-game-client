@@ -19,14 +19,21 @@ public class Position {
         return y;
     }
 
+    @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
         Position position = (Position) object;
         return x == position.x && y == position.y;
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), x, y);
+        return Objects.hash(x, y);
     }
 }
