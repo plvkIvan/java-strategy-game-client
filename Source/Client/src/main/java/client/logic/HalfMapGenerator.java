@@ -28,7 +28,7 @@ public class HalfMapGenerator {
     public GameHalfMap generate() {
         while (true) {
             GameHalfMap gameHalfMap = generateCandidate();
-            if (isValidMap(gameHalfMap)) {
+            if (gameHalfMap != null && isValidMap(gameHalfMap)) {
                 return gameHalfMap;
             }
         }
@@ -69,7 +69,7 @@ public class HalfMapGenerator {
 
         Position castlePosition = chooseCastlePosition(gameHalfMap);
         if( castlePosition == null) {
-            return gameHalfMap;
+            return null;
         }
 
         MapNode oldCastleNode = gameHalfMap.getMapNode(castlePosition);
@@ -86,7 +86,7 @@ public class HalfMapGenerator {
 
             boolean isInside = position.getX() > 0 && position.getX() < WIDTH-1
                     && position.getY() > 0 && position.getY() < HEIGHT -1;
-            if(isInside && mapNode.isWalkable()) {
+            if(isInside && mapNode.getTerrainType() == TerrainType.GRASS) {
                 possibleCastlePositions.add(position);
             }
         }
