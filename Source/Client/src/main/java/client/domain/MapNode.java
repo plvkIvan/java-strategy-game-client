@@ -1,6 +1,6 @@
 package client.domain;
 
-public class Tile {
+public class MapNode {
     private final Position position;
     private final TerrainType terrainType;
     private final boolean hasCastle;
