@@ -12,7 +12,13 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.ResponseEnvelope;
 import messagesbase.messagesfromclient.ERequestState;
 import messagesbase.messagesfromserver.GameState;
+import messagesbase.messagesfromclient.PlayerHalfMap;
 import reactor.core.publisher.Mono;
+
+import client.converter.HalfMapConverter;
+import client.domain.GameHalfMap;
+import client.logic.HalfMapGenerator;
+
 
 public class MainClient {
 	
@@ -120,6 +126,8 @@ public class MainClient {
 			return;
 		}
 
+		UniquePlayerIdentifier ownClientPlayerID;
+
 		// always check for errors, and if some are reported, at least print them to the
 		// console (logging, exceptions ... should always be preferred!)
 		// so that you become aware of them during debugging! The provided server gives
@@ -131,14 +139,48 @@ public class MainClient {
 			// open http://swe1.wst.univie.ac.at:18235/games in your browser to create a new
 			// game and obtain its game id
 			System.err.println("🚨 Client error, received message: " + resultReg.getExceptionMessage());
+			return;
 		} else {
 			// recommended modern (functional) approach to handle an java.util.Optional type
 			resultReg.getData().ifPresent(System.out::println);
 			
 			// classic approach to access Optional's content, valid but often quite verbose
-			UniquePlayerIdentifier ownClientPlayerID =  resultReg.getData().get();		
+			ownClientPlayerID =  resultReg.getData().get();
 			System.out.println("Registration successful! 🥳 - 🧓 \"Classic\" approach, but still possible, got player ID: " + ownClientPlayerID + " 🎉");
 		}
+
+		HalfMapGenerator halfMapGenerator = new HalfMapGenerator();
+		GameHalfMap gameHalfMap = halfMapGenerator.generate();
+
+		HalfMapConverter halfMapConverter = new HalfMapConverter();
+		PlayerHalfMap playerHalfMap = halfMapConverter.toDto(gameHalfMap, ownClientPlayerID);
+
+		Mono<ResponseEnvelope<Void>> halfMapAccess = baseWebClient
+				.method(HttpMethod.POST)
+				.uri("/" + gameId + "/halfmaps")
+				.body(BodyInserters.fromValue(playerHalfMap))
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
+
+		ResponseEnvelope<Void> halfMapResult = halfMapAccess.block();
+
+		if (halfMapResult == null) {
+			System.err.println("Half map upload failed: no response from server.");
+			return;
+		}
+
+		if (halfMapResult.getState() == ERequestState.Error) {
+			System.err.println("Half map upload failed: " + halfMapResult.getExceptionMessage());
+		} else {
+			System.out.println("Half map sent successfully");
+		}
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+	}
 		
 		/*
 		 * TIP: Check out the network protocol documentation. It shows you with a nice
