@@ -212,7 +212,7 @@ public class MainClient {
 		 * without violating the maximum turn time limit. Check out the network protocol
 		 * documentation for details on how to do so.
 		 */
-	}
+
 
 	/*
 	 * This example method shall show you how to create a GET request. Here, it
