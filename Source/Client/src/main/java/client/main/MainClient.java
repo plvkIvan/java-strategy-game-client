@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import messagesbase.messagesfromserver.EPlayerGameState;
+import messagesbase.messagesfromserver.PlayerState;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.ResponseEnvelope;
@@ -149,6 +151,8 @@ public class MainClient {
 			System.out.println("Registration successful! 🥳 - 🧓 \"Classic\" approach, but still possible, got player ID: " + ownClientPlayerID + " 🎉");
 		}
 
+		waitUntilMustAct(baseWebClient, gameId, ownClientPlayerID);
+
 		HalfMapGenerator halfMapGenerator = new HalfMapGenerator();
 		GameHalfMap gameHalfMap = halfMapGenerator.generate();
 
@@ -171,9 +175,10 @@ public class MainClient {
 
 		if (halfMapResult.getState() == ERequestState.Error) {
 			System.err.println("Half map upload failed: " + halfMapResult.getExceptionMessage());
-		} else {
-			System.out.println("Half map sent successfully");
+			return;
 		}
+
+		System.out.println("Half map sent successfully");
 
 		try {
 			Thread.sleep(500);
@@ -264,5 +269,56 @@ public class MainClient {
 			// result from the main method
 			GameState currentServerGameState = requestResult.getData().get();
 		}
+	}
+	private static void waitUntilMustAct(WebClient baseWebClient, String gameId,
+										 UniquePlayerIdentifier ownClientPlayerID) {
+		while (true) {
+			Mono<ResponseEnvelope<GameState>> stateAccess = baseWebClient
+					.method(HttpMethod.GET)
+					.uri("/" + gameId + "/states/" + ownClientPlayerID.getUniquePlayerID())
+					.retrieve()
+					.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
+
+			ResponseEnvelope<GameState> stateResult = stateAccess.block();
+
+			if (stateResult == null) {
+				System.err.println("Game state request failed: no response from server.");
+				return;
+			}
+
+			if (stateResult.getState() == ERequestState.Error) {
+				System.err.println("Game state request failed: " + stateResult.getExceptionMessage());
+				return;
+			}
+
+			GameState currentGameState = stateResult.getData().orElse(null);
+			if (currentGameState == null) {
+				System.err.println("Game state request failed: no game state data.");
+				return;
+			}
+
+			PlayerState ownPlayerState = findOwnPlayerState(currentGameState, ownClientPlayerID);
+
+			if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.MustAct) {
+				return;
+			}
+
+			try {
+				Thread.sleep(400);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
+		}
+	}
+
+	private static PlayerState findOwnPlayerState(GameState gameState,
+												  UniquePlayerIdentifier ownClientPlayerID) {
+		for (PlayerState playerState : gameState.getPlayers()) {
+			if (playerState.getUniquePlayerID().equals(ownClientPlayerID.getUniquePlayerID())) {
+				return playerState;
+			}
+		}
+		return null;
 	}
 }
