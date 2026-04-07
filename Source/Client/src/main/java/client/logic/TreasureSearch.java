@@ -12,13 +12,13 @@ import messagesbase.messagesfromserver.GameState;
 public class TreasureSearch {
     private final Set<Position> ownHalfPositions;
 
-    public TreasureSearchStrategy(Set<Position> ownHalfPositions) {
+    public TreasureSearch(Set<Position> ownHalfPositions) {
         this.ownHalfPositions = ownHalfPositions;
     }
 
-    public Position chooseTarget(GameState gameState, Position currentPosition,
-                                 Set<Position> visitedPositions, PathFinder pathFinder) {
-        Position visibleTreasure = findVisibleTreasure(gameState);
+    public Position chooseTarget(GameState gameState, Position currentPosition, Set<Position> visitedPositions, PathFinder pathFinder) {
+        Position visibleTreasure = findTreasureIfVisible(gameState);
+
         if (visibleTreasure != null) {
             return visibleTreasure;
         }
@@ -27,7 +27,6 @@ public class TreasureSearch {
 
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             Position position = new Position(node.getX(), node.getY());
-
             if (!ownHalfPositions.contains(position)) {
                 continue;
             }
@@ -51,12 +50,13 @@ public class TreasureSearch {
         return currentPosition;
     }
 
-    private Position findVisibleTreasure(GameState gameState) {
+    private Position findTreasureIfVisible(GameState gameState) {
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
                 return new Position(node.getX(), node.getY());
             }
         }
+
         return null;
     }
 }
