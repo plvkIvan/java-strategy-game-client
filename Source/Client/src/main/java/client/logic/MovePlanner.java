@@ -13,17 +13,17 @@ public class MovePlanner {
         this.pathFinder = pathFinder;
     }
 
-    public Emove planNextMove(GameState gameState, Position current, Position target) {
+    public EMove planNextMove(GameState gameState, Position current, Position target) {
         List<Position> path = pathFinde(gameState, current, target);
         if (path.size() < 2) {
             return null;
         }
 
         Position nextPosition = path.get(1);
-        return determine Move(current, nextPosition);
+        return determineMove(current, nextPosition);
     }
 
-    private EMoveDetermineMove(Position from, Position to) {
+    private EMove determineMove(Position from, Position to) {
         if (to.getX() == from.getX() && to.getY() == from.getY() - 1) {
             return EMove.Up;
         }

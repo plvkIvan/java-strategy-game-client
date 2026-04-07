@@ -13,9 +13,6 @@ import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.GameState;
 
 public class PathFinder {
-    private static final int MAP_WIDTH = 10;
-    private static final int MAP_HEIGHT = 10;
-
     public List<Position> findPath(GameState gameState, Position start, Position target) {
         if (start == null || target == null) {
             return List.of();
@@ -29,17 +26,22 @@ public class PathFinder {
             return List.of();
         }
 
-        DijkstraResult result = runDijkstra(nodeMap, start, target);
+        int mapWidth = getMapWidth(GameState);
+        int mapHeight = getMapHeight(GameState);
+        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
+
         return buildPath(result.previous, start, target);
     }
 
     public Position findNearestReachableTarget(GameState gameState, Position start, Set<Position> candidates) {
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+        int mapWidth = getMapWidth(GameState);
+        int mapHeight = getMapHeight(GameState);
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
 
         for (Position candidate : candidates) {
-            int cost = findPathCost(nodeMap, start, candidate);
+            int cost = findPathCost(nodeMap, start, candidate, mapWidth, mapHeight);
             if (cost >= 0 && cost < bestCost) {
                 bestCost = cost;
                 bestTarget = candidate;
@@ -49,7 +51,8 @@ public class PathFinder {
         return bestTarget;
     }
 
-    private int findPathCost(Map<Position, FullMapNode> nodeMap, Position start, Position target) {
+    private int findPathCost(Map<Position, FullMapNode> nodeMap, Position start,
+                             Position target, int mapWidth, int mapHeight) {
         if (start == null || target == null) {
             return -1;
         }
@@ -60,12 +63,12 @@ public class PathFinder {
             return -1;
         }
 
-        DijkstraResult result = runDijkstra(nodeMap, start, target);
+        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
         Integer cost = result.distances.get(target);
         return cost != null ? cost : -1;
     }
 
-    private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap, Position start, Position target) {
+    private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap, Position start, Position target, int mapWidth, int mapHeight) {
         Map<Position, Integer> distances = new HashMap<>();
         Map<Position, Position> previous = new HashMap<>();
         PriorityQueue<PathNode> queue = new PriorityQueue<>();
@@ -89,7 +92,7 @@ public class PathFinder {
                 continue;
             }
 
-            for (Position neighbor : MapUtils.getNeighbors(current, MAP_WIDTH, MAP_HEIGHT)) {
+            for (Position neighbor : MapUtils.getNeighbors(current, mapWidth, mapHeight)) {
                 FullMapNode neighborMapNode = nodeMap.get(neighbor);
                 if (neighborMapNode == null || !isWalkable(neighborMapNode)) {
                     continue;
@@ -115,6 +118,26 @@ public class PathFinder {
             nodeMap.put(new Position(node.getX(), node.getY()), node);
         }
         return nodeMap;
+    }
+
+    private int getMapWidth(GameState gameState) {
+        int maxX = 0;
+        for (FullMapNode node : gameState.getMap().getMapNodes()) {
+            if (node.getX() > maxX) {
+                maxX = node.getX();
+            }
+        }
+        return maxX + 1;
+    }
+
+    private int getMapHeight(GameState gameState) {
+        int maxY = 0;
+        for (FullMapNode node : gameState.getMap().getMapNodes()) {
+            if (node.getY() > maxY) {
+                maxY = node.getY();
+            }
+        }
+        return maxY + 1;
     }
 
     private boolean isWalkable(FullMapNode node) {
