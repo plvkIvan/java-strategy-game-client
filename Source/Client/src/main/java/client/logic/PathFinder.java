@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import client.domain.Position;
 import messagesbase.messagesfromclient.ETerrain;
@@ -12,6 +13,8 @@ import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.GameState;
 
 public class PathFinder {
+    private static final int MAP_WIDTH = 20;
+    private static final int MAP_HEIGHT = 10;
 
     public List<Position> findPath(GameState gameState, Position start, Position target) {
         if (start == null || target == null) {
@@ -30,7 +33,7 @@ public class PathFinder {
         return buildPath(result.previous, start, target);
     }
 
-    public Position findNearestReachableTarget(GameState gameState, Position start, java.util.Set<Position> candidates) {
+    public Position findNearestReachableTarget(GameState gameState, Position start, Set<Position> candidates) {
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
@@ -86,7 +89,7 @@ public class PathFinder {
                 continue;
             }
 
-            for (Position neighbor : getNeighbors(current)) {
+            for (Position neighbor : MapUtils.getNeighbors(current, MAP_WIDTH, MAP_HEIGHT)) {
                 FullMapNode neighborMapNode = nodeMap.get(neighbor);
                 if (neighborMapNode == null || !isWalkable(neighborMapNode)) {
                     continue;
@@ -132,26 +135,26 @@ public class PathFinder {
 
         while (current != null) {
             path.add(0, current);
-            if (current.equals(start)) break;
+            if (current.equals(start)) {
+                break;
+            }
             current = previous.get(current);
         }
 
-        if (path.isEmpty() || !path.get(0).equals(start)) return List.of();
+        if (path.isEmpty() || !path.get(0).equals(start)) {
+            return List.of();
+        }
+
         return path;
     }
 
-    private List<Position> getNeighbors(Position position) {
-        List<Position> neighbors = new ArrayList<>();
-        addIfInside(neighbors, position.getX(), position.getY() - 1);
-        addIfInside(neighbors, position.getX(), position.getY() + 1);
-        addIfInside(neighbors, position.getX() - 1, position.getY());
-        addIfInside(neighbors, position.getX() + 1, position.getY());
-        return neighbors;
-    }
+    private static class DijkstraResult {
+        private final Map<Position, Integer> distances;
+        private final Map<Position, Position> previous;
 
-    private void addIfInside(List<Position> positions, int x, int y) {
-        if (x >= 0 && x < 20 && y >= 0 && y < 10) {
-            positions.add(new Position(x, y));
+        private DijkstraResult(Map<Position, Integer> distances, Map<Position, Position> previous) {
+            this.distances = distances;
+            this.previous = previous;
         }
     }
 
@@ -167,16 +170,6 @@ public class PathFinder {
         @Override
         public int compareTo(PathNode other) {
             return Integer.compare(this.distance, other.distance);
-        }
-    }
-
-    private static class DijkstraResult {
-        final Map<Position, Integer> distances;
-        final Map<Position, Position> previous;
-
-        DijkstraResult(Map<Position, Integer> distances, Map<Position, Position> previous) {
-            this.distances = distances;
-            this.previous = previous;
         }
     }
 }
