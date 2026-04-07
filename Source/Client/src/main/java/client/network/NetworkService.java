@@ -9,8 +9,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import messagesbase.ResponseEnvelope;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.ERequestState;
 import messagesbase.messagesfromclient.PlayerHalfMap;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import reactor.core.publisher.Mono;
@@ -21,17 +23,22 @@ public class NetworkService {
 
     public NetworkService(String serverBaseUrl, String gameId) {
         this.gameId = gameId;
-        this.baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
+        this.baseWebClient = WebClient.builder()
+                .baseUrl(serverBaseUrl + "/games")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE)
+                .build();
     }
 
     public UniquePlayerIdentifier registerPlayer(String firstName, String lastName, String uAccount) {
         PlayerRegistration registration = new PlayerRegistration(firstName, lastName, uAccount);
 
-        Mono<ResponseEnvelope<UniquePlayerIdentifier>> webAccess = baseWebClient.method(HttpMethod.POST)
-                .uri("/" + gameId + "/players").body(BodyInserters.fromValue(registration))
-                .retrieve().bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {});
+        Mono<ResponseEnvelope<UniquePlayerIdentifier>> webAccess = baseWebClient
+                .method(HttpMethod.POST)
+                .uri("/" + gameId + "/players")
+                .body(BodyInserters.fromValue(registration))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {});
 
         ResponseEnvelope<UniquePlayerIdentifier> response = webAccess.block();
 
@@ -67,8 +74,10 @@ public class NetworkService {
     }
 
     public GameState getGameState(UniquePlayerIdentifier playerId) {
-        Mono<ResponseEnvelope<GameState>> webAccess = baseWebClient.method(HttpMethod.GET)
-                .uri("/" + gameId + "/states/" + playerId.getUniquePlayerID()).retrieve()
+        Mono<ResponseEnvelope<GameState>> webAccess = baseWebClient
+                .method(HttpMethod.GET)
+                .uri("/" + gameId + "/states/" + playerId.getUniquePlayerID())
+                .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
 
         ResponseEnvelope<GameState> response = webAccess.block();
@@ -83,5 +92,26 @@ public class NetworkService {
 
         return response.getData()
                 .orElseThrow(() -> new IllegalStateException("Game state response contained no data."));
+    }
+
+    public void sendMove(UniquePlayerIdentifier playerId, EMove move) {
+        PlayerMove playerMove = PlayerMove.of(playerId, move);
+
+        Mono<ResponseEnvelope<Void>> webAccess = baseWebClient
+                .method(HttpMethod.POST)
+                .uri("/" + gameId + "/moves")
+                .body(BodyInserters.fromValue(playerMove))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
+
+        ResponseEnvelope<Void> response = webAccess.block();
+
+        if (response == null) {
+            throw new IllegalStateException("No response after sending move.");
+        }
+
+        if (response.getState() == ERequestState.Error) {
+            throw new IllegalStateException("Move failed: " + response.getExceptionMessage());
+        }
     }
 }

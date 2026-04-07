@@ -13,7 +13,7 @@ import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.GameState;
 
 public class PathFinder {
-    private static final int MAP_WIDTH = 20;
+    private static final int MAP_WIDTH = 10;
     private static final int MAP_HEIGHT = 10;
 
     public List<Position> findPath(GameState gameState, Position start, Position target) {
