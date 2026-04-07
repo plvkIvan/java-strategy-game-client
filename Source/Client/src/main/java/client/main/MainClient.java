@@ -1,157 +1,51 @@
 package client.main;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import messagesbase.messagesfromserver.EPlayerGameState;
-import messagesbase.messagesfromserver.PlayerState;
-import messagesbase.UniquePlayerIdentifier;
-import messagesbase.messagesfromclient.PlayerRegistration;
-import messagesbase.ResponseEnvelope;
-import messagesbase.messagesfromclient.ERequestState;
-import messagesbase.messagesfromserver.GameState;
-import messagesbase.messagesfromclient.PlayerHalfMap;
-import reactor.core.publisher.Mono;
+import java.util.HashSet;
+import java.util.Set;
 
 import client.converter.HalfMapConverter;
 import client.domain.GameHalfMap;
+import client.domain.MapNode;
+import client.domain.Position;
+import client.logic.CastleSearch;
 import client.logic.HalfMapGenerator;
-
+import client.logic.MovePlanner;
+import client.logic.PathFinder;
+import client.logic.TreasureSearch;
+import client.network.NetworkService;
+import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.EMove;
+import messagesbase.messagesfromclient.PlayerHalfMap;
+import messagesbase.messagesfromserver.EPlayerGameState;
+import messagesbase.messagesfromserver.GameState;
+import messagesbase.messagesfromserver.PlayerState;
 
 public class MainClient {
-	
-	// ADDITIONAL TIPS ON THIS MATTER ARE GIVEN THROUGHOUT THE TUTORIAL SESSION!
+	private static final long POLL_INTERVAL_MS = 400;
+	private static final int TARGET_VISITED_FIELDS = 16;
 
-	/*
-	 * Below, you can find an example of how to use both required HTTP operations,
-	 * i.e., POST and GET to communicate with the server.
-	 * 
-	 * Note, this is only an example. Hence, your own implementation should NOT
-	 * place all the logic in a single main method!
-	 * 
-	 * Further, I would recommend that you check out: a) The JavaDoc of the network
-	 * message library, which describes all messages, and their CTORs/methods. You
-	 * can find it here http://swe1.wst.univie.ac.at/ b) The informal network
-	 * documentation is given in Moodle, which describes which messages must be used
-	 * when and how.
-	 */
+
 	public static void main(String[] args) {
-
 		if (args == null || args.length < 3) {
 			System.err.println("Not enough start parameters.");
 			System.err.println("Expected: <mode> <serverBaseUrl> <gameId>");
 			return;
 		}
 
-		/*
-		 * IMPORTANT: Parsing/Handling of starting parameters.
-		 * 
-		 * args[0] = Game Mode, you Can use this to know that your code is running on
-		 * the evaluation server (if this is the case args[0] = TR). If this is the
-		 * case, only a command line interface must be displayed. Also, no JavaFX and
-		 * Swing UI components and classes must be used/executed by your Client in any
-		 * way IF args[0] = TR.
-		 * 
-		 * args[1] = Server URL, will hold the server URL your Client should use. Note,
-		 * only use the server URL supplied here as the URL used by you during the
-		 * development and by the evaluation server (for grading) is NOT the same!
-		 * args[1] enables your Client always to get the correct one.
-		 * 
-		 * args[2] = Holds the game ID which your Client should use. For testing
-		 * purposes, you can create a new one by accessing
-		 * http://swe1.wst.univie.ac.at:18235/games with your web browser. IMPORTANT: If
-		 * a value is stored in args[2], you MUST use it! DO NOT create new games in
-		 * your code in such a case!
-		 * 
-		 * DON'T FORGET TO EVALUATE YOUR FINAL IMPLEMENTATION WITH OUR TEST SERVER. THIS
-		 * IS ALSO THE BASE FOR GRADING. THE TEST SERVER CAN BE FOUND AT:
-		 * http://swe1.wst.univie.ac.at/
-		 * 
-		 * HINT: The assignment section in Moodle also explains all the important
-		 * aspects about the start parameters/arguments. Use the Run Configurations (as
-		 * shown during the IDE screencast) in Eclipse to simulate the starting of an
-		 * application with start parameters or implement your argument parsing code to
-		 * become more flexible (e.g., to mix hard coded and supplied parameters whenever
-		 * the one or the other is available).
-		 */
-
-		// parse the parameters, otherwise the automatic evaluation will not work on
-		// http://swe1.wst.univie.ac.at
 		String serverBaseUrl = args[1];
 		String gameId = args[2];
 
-		// template WebClient configuration, will be reused/customized for each
-		// individual endpoint
-		// TIP: create it once in the CTOR of your network class and subsequently use it
-		// in each communication method
-		WebClient baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE) // we send XML (cf. network protocol)
-				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE) // we receive XML (cf. network protocol)
-				.build();
+		NetworkService networkService = new NetworkService(serverBaseUrl, gameId);
 
-		/*
-		 * Note, EACH client must only register a SINGLE player (i.e., you) ONCE! It is
-		 * OK, if you hard code your private data in your code. Here, this example shows
-		 * you how to perform a POST request (and a client registration), you can build
-		 * on this example to implement all the other messages which use POST. An
-		 * example of how to use GET requests is given below.
-		 * 
-		 * Always give your real UniVie u:account user (e.g., musterm44) during the
-		 * registration phase. Otherwise, the automatic progress tracking will not be
-		 * able to determine and assign related bonus points. 
-		 */
-		PlayerRegistration playerReg = new PlayerRegistration(
+		UniquePlayerIdentifier ownClientPlayerID = networkService.registerPlayer(
 				"Ivan",
 				"Polovko",
-				"polovkoi98");
-		Mono<ResponseEnvelope<UniquePlayerIdentifier>> webAccess = baseWebClient
-				.method(HttpMethod.POST)
-				.uri("/" + gameId + "/players")
-				.body(BodyInserters.fromValue(playerReg)) // specify the data which is sent to the server
-				.retrieve()
-				// expected object type to be returned by the server
-				.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {}); 
-				
+				"polovkoi98"
+		);
 
-		// WebClient support asynchronous message exchange. In SE1 we use a synchronous
-		// one for the sake of simplicity (such that you don't need to know about threads, callbacks, synchronisation etc.)
-		// So calling block (which should normally be avoided) is fine.
-		// For real world projects: Check out asynchronous communication and callbacks.
-		ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
+		System.out.println("Registration successful. Player ID: " + ownClientPlayerID);
 
-		if (resultReg == null) {
-			System.err.println("Registration failed: no response from server.");
-			return;
-		}
-
-		UniquePlayerIdentifier ownClientPlayerID;
-
-		// always check for errors, and if some are reported, at least print them to the
-		// console (logging, exceptions ... should always be preferred!)
-		// so that you become aware of them during debugging! The provided server gives
-		// you constructive error messages.
-		if (resultReg.getState() == ERequestState.Error) {
-			// typically happens if you forgot to create a new game before the client
-			// execution or forgot to adapt the run configuration so that it supplies
-			// the id of the new game to the client
-			// open http://swe1.wst.univie.ac.at:18235/games in your browser to create a new
-			// game and obtain its game id
-			System.err.println("🚨 Client error, received message: " + resultReg.getExceptionMessage());
-			return;
-		} else {
-			// recommended modern (functional) approach to handle an java.util.Optional type
-			resultReg.getData().ifPresent(System.out::println);
-			
-			// classic approach to access Optional's content, valid but often quite verbose
-			ownClientPlayerID =  resultReg.getData().get();
-			System.out.println("Registration successful! 🥳 - 🧓 \"Classic\" approach, but still possible, got player ID: " + ownClientPlayerID + " 🎉");
-		}
-
-		waitUntilMustAct(baseWebClient, gameId, ownClientPlayerID);
+		waitUntilMustAct(networkService, ownClientPlayerID);
 
 		HalfMapGenerator halfMapGenerator = new HalfMapGenerator();
 		GameHalfMap gameHalfMap = halfMapGenerator.generate();
@@ -159,156 +53,107 @@ public class MainClient {
 		HalfMapConverter halfMapConverter = new HalfMapConverter();
 		PlayerHalfMap playerHalfMap = halfMapConverter.toDto(gameHalfMap, ownClientPlayerID);
 
-		Mono<ResponseEnvelope<Void>> halfMapAccess = baseWebClient
-				.method(HttpMethod.POST)
-				.uri("/" + gameId + "/halfmaps")
-				.body(BodyInserters.fromValue(playerHalfMap))
-				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
-
-		ResponseEnvelope<Void> halfMapResult = halfMapAccess.block();
-
-		if (halfMapResult == null) {
-			System.err.println("Half map upload failed: no response from server.");
-			return;
-		}
-
-		if (halfMapResult.getState() == ERequestState.Error) {
-			System.err.println("Half map upload failed: " + halfMapResult.getExceptionMessage());
-			return;
-		}
-
+		networkService.sendHalfMap(playerHalfMap);
 		System.out.println("Half map sent successfully");
 
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+		Set<Position> ownHalfPositions = new HashSet<>();
+		for (MapNode mapNode : gameHalfMap.getMapNodes()) {
+			ownHalfPositions.add(mapNode.getPosition());
+		}
+
+		PathFinder pathFinder = new PathFinder();
+		MovePlanner movePlanner = new MovePlanner(pathFinder);
+		TreasureSearch treasureSearch = new TreasureSearch(ownHalfPositions);
+		CastleSearch castleSearch = new CastleSearch(ownHalfPositions);
+
+		Set<Position> visitedPositions = new HashSet<>();
+		boolean printedMilestone = false;
+
+		while (true) {
+			GameState gameState = networkService.getGameState(ownClientPlayerID);
+			PlayerState ownPlayerState = findOwnPlayerState(gameState, ownClientPlayerID);
+
+			if (ownPlayerState == null) {
+				sleep();
+				continue;
+			}
+
+			if (ownPlayerState.getState() == EPlayerGameState.Won) {
+				System.out.println("Game won.");
+				return;
+			}
+
+			if (ownPlayerState.getState() == EPlayerGameState.Lost) {
+				System.out.println("Game lost.");
+				return;
+			}
+
+			Position currentPosition = findCurrentPosition(gameState);
+
+			if (currentPosition != null) {
+				visitedPositions.add(currentPosition);
+			}
+
+			if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
+				System.out.println("Milestone reached: 16 different fields visited.");
+				printedMilestone = true;
+			}
+
+			if (ownPlayerState.getState() == EPlayerGameState.MustWait) {
+				sleep();
+				continue;
+			}
+
+			if (currentPosition == null) {
+				sleep();
+				continue;
+			}
+
+			Position targetPosition;
+
+			if (ownPlayerState.hasCollectedTreasure()) {
+				targetPosition = castleSearch.chooseTarget(
+						gameState, currentPosition, visitedPositions, pathFinder);
+			} else {
+				targetPosition = treasureSearch.chooseTarget(
+						gameState, currentPosition, visitedPositions, pathFinder);
+			}
+
+			if (targetPosition == null || targetPosition.equals(currentPosition)) {
+				sleep();
+				continue;
+			}
+
+			EMove move = movePlanner.planNextMove(gameState, currentPosition, targetPosition);
+			if (move == null) {
+				sleep();
+				continue;
+			}
+
+			networkService.sendMove(ownClientPlayerID, move);
+			sleep();
 		}
 	}
-		
-		/*
-		 * TIP: Check out the network protocol documentation. It shows you with a nice
-		 * sequence diagram all the steps which are required to be executed by your
-		 * client along with a general overview on the required behavior (e.g., when it
-		 * is necessary to repeatedly ask the server for its state to determine if
-		 * actions can be sent or not). When the client will need to wait for the other
-		 * client and when your client should stop sending any more messages to the
-		 * server.
-		 */
 
-		/*
-		 * TIP: A game consists of two clients. How can I get two clients for testing
-		 * purposes? Start your client two times. You can do this in Eclipse by hitting
-		 * the green start button twice. Or you can start your jar file twice in two
-		 * different terminals. When you hit the debug button twice, you can even debug
-		 * both clients "independently" from each other (see, IDE screencast in Moodle).
-		 * 
-		 * Alternative: Use the dummy competitor mode when creating new games to simplify
-		 * your development phase. But note, this can, of course, only be a rough
-		 * simulation. Why? Because some behavior observed by an actual second client,
-		 * like network delay, will not be present, of course. So perform tests with your
-		 * client running with two actual client instances too.
-		 */
-
-		/*
-		 * TIP: To ease debugging and development, you can create special games. Such
-		 * games can get assigned a dummy competitor, or you can stop and debug them
-		 * without violating the maximum turn time limit. Check out the network protocol
-		 * documentation for details on how to do so.
-		 */
-
-
-	/*
-	 * This example method shall show you how to create a GET request. Here, it
-	 * shows you how to use a GET request to request the state of a game. You can
-	 * define all GET requests accordingly.
-	 * 
-	 * The only reason to use GET requests in the Client should be to request
-	 * states. We strongly advise NOT to use the Client to create new games
-	 * programmatically. This is because multiple students before you failed to
-	 * integrate this properly into their Client logic - and subsequently struggled
-	 * with the automatic evaluation.
-	 */
-	public static void exampleForGetRequests() throws Exception {
-		// you will need to fill the variables with the appropriate information
-		String baseUrl = "UseValueFromARGS_1 FROM main";
-		String gameId = "UseValueFromARGS_2 FROM main";
-		String playerId = "From the client registration";
-
-		// TIP: Use a global instance of the base WebClient throughout each
-		// communication
-		// you can initialize it once in the CTOR and use it in each of the network
-		// communication methods in your networking class
-		WebClient baseWebClient = WebClient.builder().baseUrl(baseUrl + "/games")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE) // the network protocol uses XML
-				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
-		
-		// the bodyToMono(...) part specifies the expected object type to be returned by the server
-		Mono<ResponseEnvelope<GameState>> webAccess = baseWebClient
-				.method(HttpMethod.GET)
-				.uri("/" + gameId + "/states/" + playerId)
-				.retrieve()
-				// expected object type to be returned by the server
-				.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
-		 
-		// WebClient support asynchronous message exchange. In SE1 we use a synchronous
-		// one for the sake of simplicity. So calling block is fine.
-		// For real world projects: Check out asynchronous communication and callbacks.
-		ResponseEnvelope<GameState> requestResult = webAccess.block();
-
-		// always check for errors, and if some are reported, at least print them to the
-		// console (logging should always be preferred!)
-		// so that you become aware of them during debugging! The provided server gives
-		// you constructive error messages.
-		if (requestResult.getState() == ERequestState.Error) {
-			System.err.println("Client error, message: " + requestResult.getExceptionMessage());
-		}
-		else {
-			// the returned data can be accessed similarly to the player registration 
-			// result from the main method
-			GameState currentServerGameState = requestResult.getData().get();
-		}
-	}
-	private static void waitUntilMustAct(WebClient baseWebClient, String gameId,
+	private static void waitUntilMustAct(NetworkService networkService,
 										 UniquePlayerIdentifier ownClientPlayerID) {
 		while (true) {
-			Mono<ResponseEnvelope<GameState>> stateAccess = baseWebClient
-					.method(HttpMethod.GET)
-					.uri("/" + gameId + "/states/" + ownClientPlayerID.getUniquePlayerID())
-					.retrieve()
-					.bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
-
-			ResponseEnvelope<GameState> stateResult = stateAccess.block();
-
-			if (stateResult == null) {
-				System.err.println("Game state request failed: no response from server.");
-				return;
-			}
-
-			if (stateResult.getState() == ERequestState.Error) {
-				System.err.println("Game state request failed: " + stateResult.getExceptionMessage());
-				return;
-			}
-
-			GameState currentGameState = stateResult.getData().orElse(null);
-			if (currentGameState == null) {
-				System.err.println("Game state request failed: no game state data.");
-				return;
-			}
-
+			GameState currentGameState = networkService.getGameState(ownClientPlayerID);
 			PlayerState ownPlayerState = findOwnPlayerState(currentGameState, ownClientPlayerID);
 
 			if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.MustAct) {
 				return;
 			}
 
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+			if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Won) {
 				return;
 			}
+
+			if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Lost) {
+				return;
+			}
+
+			sleep();
 		}
 	}
 
@@ -320,5 +165,22 @@ public class MainClient {
 			}
 		}
 		return null;
+	}
+
+	private static Position findCurrentPosition(GameState gameState) {
+		for (var node : gameState.getMap().getMapNodes()) {
+			if (node.getPlayerPositionState().representsMyPlayer()) {
+				return new Position(node.getX(), node.getY());
+			}
+		}
+		return null;
+
+
+	private static void sleep() {
+		try {
+			Thread.sleep(POLL_INTERVAL_MS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 }

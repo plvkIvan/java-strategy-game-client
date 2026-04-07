@@ -16,8 +16,7 @@ public class CastleSearch {
         this.ownHalfPositions = ownHalfPositions;
     }
 
-    public Position chooseTarget(GameState gameState, Position currentPosition,
-                                 Set<Position> visitedPositions, PathFinder pathFinder) {
+    public Position chooseTarget(GameState gameState, Position currentPosition, Set<Position> visitedPositions, PathFinder pathFinder) {
         Position visibleEnemyCastle = findVisibleEnemyCastle(gameState);
         if (visibleEnemyCastle != null) {
             return visibleEnemyCastle;
