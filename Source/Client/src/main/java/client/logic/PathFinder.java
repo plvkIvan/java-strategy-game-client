@@ -26,8 +26,8 @@ public class PathFinder {
             return List.of();
         }
 
-        int mapWidth = getMapWidth(GameState);
-        int mapHeight = getMapHeight(GameState);
+        int mapWidth = getMapWidth(gameState);
+        int mapHeight = getMapHeight(gameState);
         DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
 
         return buildPath(result.previous, start, target);
@@ -35,8 +35,8 @@ public class PathFinder {
 
     public Position findNearestReachableTarget(GameState gameState, Position start, Set<Position> candidates) {
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
-        int mapWidth = getMapWidth(GameState);
-        int mapHeight = getMapHeight(GameState);
+        int mapWidth = getMapWidth(gameState);
+        int mapHeight = getMapHeight(gameState);
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
 

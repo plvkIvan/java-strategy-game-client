@@ -14,7 +14,7 @@ public class MovePlanner {
     }
 
     public EMove planNextMove(GameState gameState, Position current, Position target) {
-        List<Position> path = pathFinde(gameState, current, target);
+        List<Position> path = pathFinder.findPath(gameState, current, target);
         if (path.size() < 2) {
             return null;
         }
