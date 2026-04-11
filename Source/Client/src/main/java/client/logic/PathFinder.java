@@ -34,15 +34,20 @@ public class PathFinder {
     }
 
     public Position findNearestReachableTarget(GameState gameState, Position start, Set<Position> candidates) {
+        if (candidates.isEmpty()) {
+            return null;
+        }
+
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
         int mapWidth = getMapWidth(gameState);
         int mapHeight = getMapHeight(gameState);
+        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
 
         for (Position candidate : candidates) {
-            int cost = findPathCost(nodeMap, start, candidate, mapWidth, mapHeight);
-            if (cost >= 0 && cost < bestCost) {
+            Integer cost = result.distances.get(candidate);
+            if (cost != null && cost < bestCost) {
                 bestCost = cost;
                 bestTarget = candidate;
             }
@@ -83,7 +88,7 @@ public class PathFinder {
             if (currentNode.distance > distances.getOrDefault(current, Integer.MAX_VALUE)) {
                 continue;
             }
-            if (current.equals(target)) {
+            if (target != null && current.equals(target)) {
                 break;
             }
 
