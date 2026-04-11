@@ -24,6 +24,7 @@ public class TreasureSearch {
         }
 
         Set<Position> candidates = new HashSet<>();
+        Set<Position> mountainCandidates = new HashSet<>();
 
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             Position position = new Position(node.getX(), node.getY());
@@ -39,10 +40,21 @@ public class TreasureSearch {
                 continue;
             }
 
-            candidates.add(position);
+            if (node.getTerrain() == ETerrain.Mountain) {
+                mountainCandidates.add(position);
+            }
+            else {
+                candidates.add(position);
+            }
         }
 
-        Position nearest = pathFinder.findNearestReachableTarget(gameState, currentPosition, candidates);
+        if(mountainCandidates.isEmpty()) {
+            Position nearest = pathFinder.findNearestReachableTarget(gameState, currentPosition, mountainCandidates);
+            if (nearest != null) {
+                return nearest;
+            }
+        }
+
         if (nearest != null) {
             return nearest;
         }
