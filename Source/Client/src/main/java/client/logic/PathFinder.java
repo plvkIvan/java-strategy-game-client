@@ -41,7 +41,7 @@ public class PathFinder {
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
         int mapWidth = getMapWidth(gameState);
         int mapHeight = getMapHeight(gameState);
-        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
+        DijkstraResult result = runDijkstra(nodeMap, start, null, mapWidth, mapHeight);
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
 
@@ -54,23 +54,6 @@ public class PathFinder {
         }
 
         return bestTarget;
-    }
-
-    private int findPathCost(Map<Position, FullMapNode> nodeMap, Position start,
-                             Position target, int mapWidth, int mapHeight) {
-        if (start == null || target == null) {
-            return -1;
-        }
-        if (start.equals(target)) {
-            return 0;
-        }
-        if (!nodeMap.containsKey(start) || !nodeMap.containsKey(target)) {
-            return -1;
-        }
-
-        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
-        Integer cost = result.distances.get(target);
-        return cost != null ? cost : -1;
     }
 
     private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap, Position start, Position target, int mapWidth, int mapHeight) {

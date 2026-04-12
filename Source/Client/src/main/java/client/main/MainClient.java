@@ -2,6 +2,7 @@ package client.main;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Collection;
 
 import client.converter.HalfMapConverter;
 import client.domain.GameHalfMap;
@@ -176,7 +177,7 @@ public class MainClient {
 		return null;
 	}
 
-	private static Set<Position> waitForFullMapAndDetermineOwnHalf(
+	private static Set<Position> waitForFullMap(
 			NetworkService networkService, UniquePlayerIdentifier ownClientPlayerID) {
 		while (true) {
 			sleep();

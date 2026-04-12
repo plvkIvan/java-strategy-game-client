@@ -55,6 +55,7 @@ public class TreasureSearch {
             }
         }
 
+        Position nearest = pathFinder.findNearestReachableTarget(gameState, currentPosition, candidates);
         if (nearest != null) {
             return nearest;
         }
