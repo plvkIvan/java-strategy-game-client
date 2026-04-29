@@ -9,6 +9,7 @@
 - `Netzwerkprotokoll.pdf`
 - `Software Engineering I XML, XML Schema, Netzwerk.pdf`
 - Bereitgestellte Network Library der Lehrveranstaltung
+  https://homepage.univie.ac.at/kristof.boehmer/SE1/Network_Library/Documentation/
 - Spring Framework Documentation: WebClient  
   https://docs.spring.io/spring-framework/reference/web/webflux-webclient.html
 
