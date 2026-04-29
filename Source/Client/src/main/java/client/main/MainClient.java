@@ -2,7 +2,6 @@ package client.main;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Collection;
 
 import client.converter.HalfMapConverter;
 import client.domain.GameHalfMap;
@@ -24,7 +23,7 @@ import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
 
 public class MainClient {
-	private static final long POLL_INTERVAL_MS = 400;
+	private static final long POLL_INTERVAL_MS = 500;
 	private static final int TARGET_VISITED_FIELDS = 16;
 
 
@@ -59,22 +58,22 @@ public class MainClient {
 		networkService.sendHalfMap(playerHalfMap);
 		System.out.println("Half map sent successfully");
 
-		Set<Position> ownHalfPositions = waitForFullMap(networkService, ownClientPlayerID);
-
 		PathFinder pathFinder = new PathFinder();
 		MovePlanner movePlanner = new MovePlanner(pathFinder);
-		TreasureSearch treasureSearch = new TreasureSearch(ownHalfPositions);
-		CastleSearch castleSearch = new CastleSearch(ownHalfPositions);
+
+		Set<Position> ownHalfPositions = null;
+		TreasureSearch treasureSearch = null;
+		CastleSearch castleSearch = null;
 
 		Set<Position> visitedPositions = new HashSet<>();
 		boolean printedMilestone = false;
 
 		while (true) {
+			sleep();
 			GameState gameState = networkService.getGameState(ownClientPlayerID);
 			PlayerState ownPlayerState = findOwnPlayerState(gameState, ownClientPlayerID);
 
 			if (ownPlayerState == null) {
-				sleep();
 				continue;
 			}
 
@@ -88,26 +87,31 @@ public class MainClient {
 				return;
 			}
 
+			if (ownHalfPositions == null) {
+				ownHalfPositions = determineOwnHalf(gameState);
+				if (ownHalfPositions == null) {
+					continue;
+				}
+				treasureSearch = new TreasureSearch(ownHalfPositions);
+				castleSearch = new CastleSearch(ownHalfPositions);
+			}
+
+			if (ownPlayerState.getState() == EPlayerGameState.MustWait) {
+				continue;
+			}
+
 			Position currentPosition = findCurrentPosition(gameState);
 
-			if (currentPosition != null) {
-				visitedPositions.add(currentPosition);
-				expandMountainVision(gameState, currentPosition, visitedPositions);
+			if (currentPosition == null) {
+				continue;
 			}
+
+			visitedPositions.add(currentPosition);
+			expandMountainVision(gameState, currentPosition, visitedPositions);
 
 			if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
 				System.out.println("Milestone reached: 16 different fields visited.");
 				printedMilestone = true;
-			}
-
-			if (ownPlayerState.getState() == EPlayerGameState.MustWait) {
-				sleep();
-				continue;
-			}
-
-			if (currentPosition == null) {
-				sleep();
-				continue;
 			}
 
 			Position targetPosition;
@@ -121,18 +125,15 @@ public class MainClient {
 			}
 
 			if (targetPosition == null || targetPosition.equals(currentPosition)) {
-				sleep();
 				continue;
 			}
 
 			EMove move = movePlanner.planNextMove(gameState, currentPosition, targetPosition);
 			if (move == null) {
-				sleep();
 				continue;
 			}
 
 			networkService.sendMove(ownClientPlayerID, move);
-			sleep();
 		}
 	}
 
@@ -177,70 +178,51 @@ public class MainClient {
 		return null;
 	}
 
-	private static Set<Position> waitForFullMap(
-			NetworkService networkService, UniquePlayerIdentifier ownClientPlayerID) {
-		while (true) {
-			sleep();
-			GameState gameState = networkService.getGameState(ownClientPlayerID);
-
-			PlayerState ownPlayerState = findOwnPlayerState(gameState, ownClientPlayerID);
-			if (ownPlayerState != null) {
-				if (ownPlayerState.getState() == EPlayerGameState.Won
-						|| ownPlayerState.getState() == EPlayerGameState.Lost) {
-					return new HashSet<>();
-				}
-			}
-
-			Collection<FullMapNode> mapNodes = gameState.getMap().getMapNodes();
-			if (mapNodes.size() < 100) {
-				continue;
-			}
-
-			Position myFort = null;
-			int maxX = 0;
-			int maxY = 0;
-
-			for (FullMapNode node : mapNodes) {
-				if (node.getX() > maxX) maxX = node.getX();
-				if (node.getY() > maxY) maxY = node.getY();
-				if (node.getFortState() == EFortState.MyFortPresent) {
-					myFort = new Position(node.getX(), node.getY());
-				}
-			}
-
-			if (myFort == null) {
-				continue;
-			}
-
-			int mapWidth = maxX + 1;
-			int mapHeight = maxY + 1;
-
-			Set<Position> ownHalf = new HashSet<>();
-
-			if (mapWidth > 10) {
-				boolean ownIsLeft = myFort.getX() <= 9;
-				for (FullMapNode node : mapNodes) {
-					if (ownIsLeft && node.getX() <= 9) {
-						ownHalf.add(new Position(node.getX(), node.getY()));
-					}
-					if (!ownIsLeft && node.getX() >= 10) {
-						ownHalf.add(new Position(node.getX(), node.getY()));
-					}
-				}
-			} else {
-				boolean ownIsTop = myFort.getY() <= 4;
-				for (FullMapNode node : mapNodes) {
-					if (ownIsTop && node.getY() <= 4) {
-						ownHalf.add(new Position(node.getX(), node.getY()));
-					}
-					if (!ownIsTop && node.getY() >= 5) {
-						ownHalf.add(new Position(node.getX(), node.getY()));
-					}
-				}
-			}
-
-			return ownHalf;
+	private static Set<Position> determineOwnHalf(GameState gameState) {
+		Set<FullMapNode> mapNodes = new HashSet<>(gameState.getMap().getMapNodes());
+		if (mapNodes.size() < 100) {
+			return null;
 		}
+
+		Position myFort = null;
+		int maxX = 0;
+		int maxY = 0;
+
+		for (FullMapNode node : mapNodes) {
+			if (node.getX() > maxX) maxX = node.getX();
+			if (node.getY() > maxY) maxY = node.getY();
+			if (node.getFortState() == EFortState.MyFortPresent) {
+				myFort = new Position(node.getX(), node.getY());
+			}
+		}
+
+		int mapWidth = maxX + 1;
+
+		Set<Position> ownHalf = new HashSet<>();
+
+		if (mapWidth > 10) {
+			boolean ownIsLeft = myFort.getX() <= 9;
+			for (FullMapNode node : mapNodes) {
+				if (ownIsLeft && node.getX() <= 9) {
+					ownHalf.add(new Position(node.getX(), node.getY()));
+				}
+				if (!ownIsLeft && node.getX() >= 10) {
+					ownHalf.add(new Position(node.getX(), node.getY()));
+				}
+			}
+		} else {
+			boolean ownIsTop = myFort.getY() <= 4;
+			for (FullMapNode node : mapNodes) {
+				if (ownIsTop && node.getY() <= 4) {
+					ownHalf.add(new Position(node.getX(), node.getY()));
+				}
+				if (!ownIsTop && node.getY() >= 5) {
+					ownHalf.add(new Position(node.getX(), node.getY()));
+				}
+			}
+		}
+
+		return ownHalf;
 	}
 
 	private static void expandMountainVision(GameState gameState, Position currentPosition,
