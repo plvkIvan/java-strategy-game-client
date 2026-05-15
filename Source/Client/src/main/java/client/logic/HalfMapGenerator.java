@@ -10,7 +10,7 @@ import client.domain.Position;
 import client.domain.TerrainType;
 import client.domain.MapNode;
 import client.logic.mapgeneration.CastlePlacementTarget;
-import client.logic.mapgeneration.RandomCastlePlacer;
+import client.logic.mapgeneration.SafeRandomCastlePlacer;
 import client.logic.mapgeneration.StrategicCastlePlacer;
 
 public class HalfMapGenerator {
@@ -26,7 +26,7 @@ public class HalfMapGenerator {
 
     private final Random rand = new Random();
 
-    private final RandomCastlePlacer randomCastlePlacer = new RandomCastlePlacer(rand);
+    private final SafeRandomCastlePlacer randomCastlePlacer = new SafeRandomCastlePlacer(rand);
     private final StrategicCastlePlacer strategicCastlePlacer = new StrategicCastlePlacer(rand);
 
     public GameHalfMap generate() {
