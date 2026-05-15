@@ -2,7 +2,9 @@ package client.state;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Collection;
 
+import client.logic.mapgeneration.CastlePlacementTarget;
 import client.domain.Position;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.ETerrain;
@@ -121,5 +123,44 @@ public class GameStateAnalyzer {
                 break;
             }
         }
+    }
+
+    public CastlePlacementTarget determineCastlePlacementTarget(GameState gameState) {
+        if (gameState == null || gameState.getMap() == null) {
+            return CastlePlacementTarget.ANY;
+        }
+
+        Collection<FullMapNode> mapNodes = gameState.getMap().getMapNodes();
+
+        if (mapNodes == null || mapNodes.isEmpty()) {
+            return CastlePlacementTarget.ANY;
+        }
+
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+
+        for (FullMapNode node : mapNodes) {
+            if (node.getX() < minX) {
+                minX = node.getX();
+            }
+
+            if (node.getY() < minY) {
+                minY = node.getY();
+            }
+        }
+
+        if (minX == 0 && minY == 0) {
+            return CastlePlacementTarget.BOTTOM_RIGHT;
+        }
+
+        if (minX > 0 && minY == 0) {
+            return CastlePlacementTarget.BOTTOM_LEFT;
+        }
+
+        if (minX == 0 && minY > 0) {
+            return CastlePlacementTarget.TOP_RIGHT;
+        }
+
+        return CastlePlacementTarget.TOP_LEFT;
     }
 }

@@ -6,6 +6,7 @@ import client.domain.GameHalfMap;
 import client.logic.HalfMapGenerator;
 import client.logic.MovePlanner;
 import client.logic.PathFinder;
+import client.logic.mapgeneration.CastlePlacementTarget;
 import client.network.NetworkService;
 import client.state.GameStateAnalyzer;
 import messagesbase.UniquePlayerIdentifier;
@@ -31,9 +32,16 @@ public class ClientApplication {
 
         UniquePlayerIdentifier ownClientPlayerID = registerPlayer(networkService);
 
-        waitUntilMustAct(networkService, ownClientPlayerID);
+        GameState gameStateBeforeMapUpload = waitUntilMustAct(
+                networkService,
+                ownClientPlayerID
+        );
 
-        generateAndSendHalfMap(networkService, ownClientPlayerID);
+        generateAndSendHalfMap(
+                networkService,
+                ownClientPlayerID,
+                gameStateBeforeMapUpload
+        );
 
         PathFinder pathFinder = new PathFinder();
         MovePlanner movePlanner = new MovePlanner(pathFinder);
@@ -60,8 +68,8 @@ public class ClientApplication {
         return ownClientPlayerID;
     }
 
-    private void waitUntilMustAct(NetworkService networkService,
-                                  UniquePlayerIdentifier ownClientPlayerID) {
+    private GameState waitUntilMustAct(NetworkService networkService,
+                                       UniquePlayerIdentifier ownClientPlayerID) {
         while (true) {
             GameState currentGameState = networkService.getGameState(ownClientPlayerID);
             PlayerState ownPlayerState = gameStateAnalyzer.findOwnPlayerState(
@@ -70,15 +78,15 @@ public class ClientApplication {
             );
 
             if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.MustAct) {
-                return;
+                return currentGameState;
             }
 
             if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Won) {
-                return;
+                return currentGameState;
             }
 
             if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Lost) {
-                return;
+                return currentGameState;
             }
 
             sleep();
@@ -86,9 +94,13 @@ public class ClientApplication {
     }
 
     private void generateAndSendHalfMap(NetworkService networkService,
-                                        UniquePlayerIdentifier ownClientPlayerID) {
+                                        UniquePlayerIdentifier ownClientPlayerID,
+                                        GameState gameStateBeforeMapUpload) {
+        CastlePlacementTarget castlePlacementTarget =
+                gameStateAnalyzer.determineCastlePlacementTarget(gameStateBeforeMapUpload);
+
         HalfMapGenerator halfMapGenerator = new HalfMapGenerator();
-        GameHalfMap gameHalfMap = halfMapGenerator.generate();
+        GameHalfMap gameHalfMap = halfMapGenerator.generate(castlePlacementTarget);
 
         HalfMapConverter halfMapConverter = new HalfMapConverter();
         PlayerHalfMap playerHalfMap = halfMapConverter.toDto(gameHalfMap, ownClientPlayerID);
