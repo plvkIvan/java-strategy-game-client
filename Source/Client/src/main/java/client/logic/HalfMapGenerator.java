@@ -1,17 +1,24 @@
 package client.logic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Random;
 
 import client.domain.GameHalfMap;
+import client.domain.MapNode;
 import client.domain.Position;
 import client.domain.TerrainType;
-import client.domain.MapNode;
 import client.logic.mapgeneration.CastlePlacementTarget;
 import client.logic.mapgeneration.SafeRandomCastlePlacer;
 import client.logic.mapgeneration.StrategicCastlePlacer;
+import client.validation.MapValidationRule;
+import client.validation.MapValidator;
+import client.validation.rules.BorderWalkableRule;
+import client.validation.rules.ConnectedWalkableFieldsRule;
+import client.validation.rules.MapSizeRule;
+import client.validation.rules.OneCastleRule;
+import client.validation.rules.TerrainAmountRule;
 
 public class HalfMapGenerator {
     private static final int HEIGHT = 5;
@@ -28,6 +35,7 @@ public class HalfMapGenerator {
 
     private final SafeRandomCastlePlacer randomCastlePlacer = new SafeRandomCastlePlacer(rand);
     private final StrategicCastlePlacer strategicCastlePlacer = new StrategicCastlePlacer(rand);
+    private final MapValidator mapValidator = createMapValidator();
 
     public GameHalfMap generate() {
         return generate(CastlePlacementTarget.ANY);
@@ -36,13 +44,32 @@ public class HalfMapGenerator {
     public GameHalfMap generate(CastlePlacementTarget castlePlacementTarget) {
         while (true) {
             GameHalfMap gameHalfMap = generateCandidate(castlePlacementTarget);
-            if (gameHalfMap != null && isValidMap(gameHalfMap)) {
+
+            if (gameHalfMap != null && mapValidator.isValid(gameHalfMap)) {
                 return gameHalfMap;
             }
         }
     }
 
     private GameHalfMap generateCandidate(CastlePlacementTarget castlePlacementTarget) {
+        List<TerrainType> terrainTypes = createTerrainTypes();
+
+        Collections.shuffle(terrainTypes, rand);
+
+        GameHalfMap gameHalfMap = createMapFromTerrainTypes(terrainTypes);
+
+        Position castlePosition = chooseCastlePosition(gameHalfMap, castlePlacementTarget);
+
+        if (castlePosition == null) {
+            return null;
+        }
+
+        placeCastle(gameHalfMap, castlePosition);
+
+        return gameHalfMap;
+    }
+
+    private List<TerrainType> createTerrainTypes() {
         List<TerrainType> terrainTypes = new ArrayList<>();
 
         for (int i = 0; i < MIN_MOUNTAIN; i++) {
@@ -58,30 +85,24 @@ public class HalfMapGenerator {
         }
 
         int numberEmptyNodes = WIDTH * HEIGHT - terrainTypes.size();
+
         for (int i = 0; i < numberEmptyNodes; i++) {
             terrainTypes.add(TerrainType.GRASS);
         }
 
-        Collections.shuffle(terrainTypes, rand);
+        return terrainTypes;
+    }
 
+    private GameHalfMap createMapFromTerrainTypes(List<TerrainType> terrainTypes) {
         GameHalfMap gameHalfMap = new GameHalfMap();
         int index = 0;
 
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
                 TerrainType terrainType = terrainTypes.get(index++);
-                gameHalfMap.addMapNode(new MapNode(new Position(j, i), terrainType, false));
+                gameHalfMap.addMapNode(new MapNode(new Position(x, y), terrainType, false));
             }
         }
-
-        Position castlePosition = chooseCastlePosition(gameHalfMap, castlePlacementTarget);
-
-        if (castlePosition == null) {
-            return null;
-        }
-
-        MapNode oldCastleNode = gameHalfMap.getMapNode(castlePosition);
-        gameHalfMap.addMapNode(new MapNode(castlePosition, oldCastleNode.getTerrainType(), true));
 
         return gameHalfMap;
     }
@@ -101,79 +122,31 @@ public class HalfMapGenerator {
         );
     }
 
-    private boolean isValidMap(GameHalfMap gameHalfMap) {
-        if (gameHalfMap.size() != WIDTH * HEIGHT) {
-            return false;
-        }
-
-        if (gameHalfMap.countCastle() != 1) {
-            return false;
-        }
-
-        if (gameHalfMap.countTerrainTypes(TerrainType.MOUNTAIN) < MIN_MOUNTAIN) {
-            return false;
-        }
-
-        if (gameHalfMap.countTerrainTypes(TerrainType.WATER) < MIN_WATER) {
-            return false;
-        }
-
-        if (gameHalfMap.countTerrainTypes(TerrainType.GRASS) < MIN_GRASS) {
-            return false;
-        }
-
-        if (gameHalfMap.countWalkableRow(HEIGHT - 1) < MIN_WALKABLE_ROW
-                || gameHalfMap.countWalkableRow(0) < MIN_WALKABLE_ROW) {
-            return false;
-        }
-
-        if (gameHalfMap.countWalkableColumn(WIDTH - 1) < MIN_WALKABLE_COLUMN
-                || gameHalfMap.countWalkableColumn(0) < MIN_WALKABLE_COLUMN) {
-            return false;
-        }
-
-        return isConnected(gameHalfMap);
+    private void placeCastle(GameHalfMap gameHalfMap, Position castlePosition) {
+        MapNode oldCastleNode = gameHalfMap.getMapNode(castlePosition);
+        gameHalfMap.addMapNode(new MapNode(
+                castlePosition,
+                oldCastleNode.getTerrainType(),
+                true
+        ));
     }
 
-    private boolean isConnected(GameHalfMap gameHalfMap) {
-        Position start = null;
+    private MapValidator createMapValidator() {
+        List<MapValidationRule> validationRules = new ArrayList<>();
 
-        for (MapNode mapNode : gameHalfMap.getMapNodes()) {
-            if (mapNode.isWalkable()) {
-                start = mapNode.getPosition();
-                break;
-            }
-        }
+        validationRules.add(new MapSizeRule(WIDTH * HEIGHT));
+        validationRules.add(new OneCastleRule());
+        validationRules.add(new TerrainAmountRule(TerrainType.MOUNTAIN, MIN_MOUNTAIN));
+        validationRules.add(new TerrainAmountRule(TerrainType.WATER, MIN_WATER));
+        validationRules.add(new TerrainAmountRule(TerrainType.GRASS, MIN_GRASS));
+        validationRules.add(new BorderWalkableRule(
+                WIDTH,
+                HEIGHT,
+                MIN_WALKABLE_ROW,
+                MIN_WALKABLE_COLUMN
+        ));
+        validationRules.add(new ConnectedWalkableFieldsRule(WIDTH, HEIGHT));
 
-        if (start == null) {
-            return false;
-        }
-
-        List<Position> queue = new ArrayList<>();
-        List<Position> visited = new ArrayList<>();
-
-        queue.add(start);
-        visited.add(start);
-
-        int index = 0;
-
-        while (index < queue.size()) {
-            Position current = queue.get(index++);
-
-            for (Position neighbor : MapUtils.getNeighbors(current, WIDTH, HEIGHT)) {
-                MapNode mapNode = gameHalfMap.getMapNode(neighbor);
-
-                if (mapNode != null && mapNode.isWalkable() && !visited.contains(neighbor)) {
-                    visited.add(neighbor);
-                    queue.add(neighbor);
-                }
-            }
-        }
-
-        long walkableMapNodes = gameHalfMap.getMapNodes().stream()
-                .filter(MapNode::isWalkable)
-                .count();
-
-        return visited.size() == walkableMapNodes;
+        return new MapValidator(validationRules);
     }
 }
