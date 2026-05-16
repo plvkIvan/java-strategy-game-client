@@ -8,6 +8,7 @@ import client.domain.MapNode;
 import client.domain.Position;
 import client.logic.MapUtils;
 import client.validation.MapValidationRule;
+import client.validation.notification.ValidationNotificationCollector;
 
 public class ConnectedWalkableFieldsRule implements MapValidationRule {
     private final int width;
@@ -19,11 +20,15 @@ public class ConnectedWalkableFieldsRule implements MapValidationRule {
     }
 
     @Override
-    public boolean isSatisfiedBy(GameHalfMap gameHalfMap) {
+    public void validate(GameHalfMap gameHalfMap, ValidationNotificationCollector notifications) {
         Position start = findFirstWalkablePosition(gameHalfMap);
 
         if (start == null) {
-            return false;
+            notifications.addError(
+                    getRuleName(),
+                    "Map has no walkable field."
+            );
+            return;
         }
 
         List<Position> queue = new ArrayList<>();
@@ -51,7 +56,13 @@ public class ConnectedWalkableFieldsRule implements MapValidationRule {
                 .filter(MapNode::isWalkable)
                 .count();
 
-        return visited.size() == walkableMapNodes;
+        if (visited.size() != walkableMapNodes) {
+            notifications.addError(
+                    getRuleName(),
+                    "Not all walkable fields are connected. Reachable: "
+                            + visited.size() + ", walkable total: " + walkableMapNodes + "."
+            );
+        }
     }
 
     @Override

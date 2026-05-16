@@ -1,9 +1,10 @@
 package client.validation;
 
 import client.domain.GameHalfMap;
+import client.validation.notification.ValidationNotificationCollector;
 
 public interface MapValidationRule {
-    boolean isSatisfiedBy(GameHalfMap gameHalfMap);
+    void validate(GameHalfMap gameHalfMap, ValidationNotificationCollector notifications);
 
     String getRuleName();
 }

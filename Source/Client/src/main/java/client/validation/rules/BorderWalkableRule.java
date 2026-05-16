@@ -2,6 +2,7 @@ package client.validation.rules;
 
 import client.domain.GameHalfMap;
 import client.validation.MapValidationRule;
+import client.validation.notification.ValidationNotificationCollector;
 
 public class BorderWalkableRule implements MapValidationRule {
     private final int width;
@@ -20,14 +21,43 @@ public class BorderWalkableRule implements MapValidationRule {
     }
 
     @Override
-    public boolean isSatisfiedBy(GameHalfMap gameHalfMap) {
-        boolean topRowIsValid = gameHalfMap.countWalkableRow(0) >= minimumWalkableRowFields;
-        boolean bottomRowIsValid = gameHalfMap.countWalkableRow(height - 1) >= minimumWalkableRowFields;
+    public void validate(GameHalfMap gameHalfMap, ValidationNotificationCollector notifications) {
+        long topRowWalkableFields = gameHalfMap.countWalkableRow(0);
+        long bottomRowWalkableFields = gameHalfMap.countWalkableRow(height - 1);
+        long leftColumnWalkableFields = gameHalfMap.countWalkableColumn(0);
+        long rightColumnWalkableFields = gameHalfMap.countWalkableColumn(width - 1);
 
-        boolean leftColumnIsValid = gameHalfMap.countWalkableColumn(0) >= minimumWalkableColumnFields;
-        boolean rightColumnIsValid = gameHalfMap.countWalkableColumn(width - 1) >= minimumWalkableColumnFields;
+        if (topRowWalkableFields < minimumWalkableRowFields) {
+            notifications.addError(
+                    getRuleName(),
+                    "Top border needs at least " + minimumWalkableRowFields
+                            + " walkable fields, but got " + topRowWalkableFields + "."
+            );
+        }
 
-        return topRowIsValid && bottomRowIsValid && leftColumnIsValid && rightColumnIsValid;
+        if (bottomRowWalkableFields < minimumWalkableRowFields) {
+            notifications.addError(
+                    getRuleName(),
+                    "Bottom border needs at least " + minimumWalkableRowFields
+                            + " walkable fields, but got " + bottomRowWalkableFields + "."
+            );
+        }
+
+        if (leftColumnWalkableFields < minimumWalkableColumnFields) {
+            notifications.addError(
+                    getRuleName(),
+                    "Left border needs at least " + minimumWalkableColumnFields
+                            + " walkable fields, but got " + leftColumnWalkableFields + "."
+            );
+        }
+
+        if (rightColumnWalkableFields < minimumWalkableColumnFields) {
+            notifications.addError(
+                    getRuleName(),
+                    "Right border needs at least " + minimumWalkableColumnFields
+                            + " walkable fields, but got " + rightColumnWalkableFields + "."
+            );
+        }
     }
 
     @Override

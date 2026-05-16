@@ -2,6 +2,7 @@ package client.validation.rules;
 
 import client.domain.GameHalfMap;
 import client.validation.MapValidationRule;
+import client.validation.notification.ValidationNotificationCollector;
 
 public class MapSizeRule implements MapValidationRule {
     private final int expectedSize;
@@ -11,8 +12,15 @@ public class MapSizeRule implements MapValidationRule {
     }
 
     @Override
-    public boolean isSatisfiedBy(GameHalfMap gameHalfMap) {
-        return gameHalfMap.size() == expectedSize;
+    public void validate(GameHalfMap gameHalfMap, ValidationNotificationCollector notifications) {
+        int actualSize = gameHalfMap.size();
+
+        if (actualSize != expectedSize) {
+            notifications.addError(
+                    getRuleName(),
+                    "Expected map size " + expectedSize + ", but got " + actualSize + "."
+            );
+        }
     }
 
     @Override

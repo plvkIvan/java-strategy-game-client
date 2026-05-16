@@ -3,6 +3,7 @@ package client.validation;
 import java.util.List;
 
 import client.domain.GameHalfMap;
+import client.validation.notification.ValidationNotificationCollector;
 
 public class MapValidator {
     private final List<MapValidationRule> validationRules;
@@ -11,13 +12,17 @@ public class MapValidator {
         this.validationRules = validationRules;
     }
 
-    public boolean isValid(GameHalfMap gameHalfMap) {
+    public ValidationNotificationCollector validate(GameHalfMap gameHalfMap) {
+        ValidationNotificationCollector notifications = new ValidationNotificationCollector();
+
         for (MapValidationRule validationRule : validationRules) {
-            if (!validationRule.isSatisfiedBy(gameHalfMap)) {
-                return false;
-            }
+            validationRule.validate(gameHalfMap, notifications);
         }
 
-        return true;
+        return notifications;
+    }
+
+    public boolean isValid(GameHalfMap gameHalfMap) {
+        return !validate(gameHalfMap).hasErrors();
     }
 }

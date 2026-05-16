@@ -3,6 +3,7 @@ package client.validation.rules;
 import client.domain.GameHalfMap;
 import client.domain.TerrainType;
 import client.validation.MapValidationRule;
+import client.validation.notification.ValidationNotificationCollector;
 
 public class TerrainAmountRule implements MapValidationRule {
     private final TerrainType terrainType;
@@ -14,8 +15,16 @@ public class TerrainAmountRule implements MapValidationRule {
     }
 
     @Override
-    public boolean isSatisfiedBy(GameHalfMap gameHalfMap) {
-        return gameHalfMap.countTerrainTypes(terrainType) >= minimumAmount;
+    public void validate(GameHalfMap gameHalfMap, ValidationNotificationCollector notifications) {
+        long actualAmount = gameHalfMap.countTerrainTypes(terrainType);
+
+        if (actualAmount < minimumAmount) {
+            notifications.addError(
+                    getRuleName(),
+                    "Expected at least " + minimumAmount + " fields of type "
+                            + terrainType + ", but got " + actualAmount + "."
+            );
+        }
     }
 
     @Override

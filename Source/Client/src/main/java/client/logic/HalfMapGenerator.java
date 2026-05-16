@@ -14,6 +14,7 @@ import client.logic.mapgeneration.SafeRandomCastlePlacer;
 import client.logic.mapgeneration.StrategicCastlePlacer;
 import client.validation.MapValidationRule;
 import client.validation.MapValidator;
+import client.validation.notification.ValidationNotificationCollector;
 import client.validation.rules.BorderWalkableRule;
 import client.validation.rules.ConnectedWalkableFieldsRule;
 import client.validation.rules.MapSizeRule;
@@ -45,9 +46,17 @@ public class HalfMapGenerator {
         while (true) {
             GameHalfMap gameHalfMap = generateCandidate(castlePlacementTarget);
 
-            if (gameHalfMap != null && mapValidator.isValid(gameHalfMap)) {
+            if (gameHalfMap == null) {
+                continue;
+            }
+
+            ValidationNotificationCollector notifications = mapValidator.validate(gameHalfMap);
+
+            if (!notifications.hasErrors()) {
                 return gameHalfMap;
             }
+
+            notifications.printErrorsToSystemErr();
         }
     }
 
