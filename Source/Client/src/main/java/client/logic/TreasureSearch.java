@@ -16,7 +16,10 @@ public class TreasureSearch {
         this.ownHalfPositions = ownHalfPositions;
     }
 
-    public Position chooseTarget(GameState gameState, Position currentPosition, Set<Position> visitedPositions, PathFinder pathFinder) {
+    public Position chooseTarget(GameState gameState,
+                                 Position currentPosition,
+                                 Set<Position> visitedPositions,
+                                 PathFinder pathFinder) {
         Position visibleTreasure = findTreasureIfVisible(gameState);
 
         if (visibleTreasure != null) {
@@ -24,10 +27,11 @@ public class TreasureSearch {
         }
 
         Set<Position> candidates = new HashSet<>();
-        Set<Position> mountainCandidates = new HashSet<>();
+        Set<Position> preferredMountainCandidates = new HashSet<>();
 
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             Position position = new Position(node.getX(), node.getY());
+
             if (!ownHalfPositions.contains(position)) {
                 continue;
             }
@@ -40,24 +44,22 @@ public class TreasureSearch {
                 continue;
             }
 
+            candidates.add(position);
+
             if (node.getTerrain() == ETerrain.Mountain) {
-                mountainCandidates.add(position);
-            }
-            else {
-                candidates.add(position);
+                preferredMountainCandidates.add(position);
             }
         }
 
-        if(mountainCandidates.isEmpty()) {
-            Position nearest = pathFinder.findNearestReachableTarget(gameState, currentPosition, mountainCandidates);
-            if (nearest != null) {
-                return nearest;
-            }
-        }
+        Position bestTarget = pathFinder.findBestReachableTarget(
+                gameState,
+                currentPosition,
+                candidates,
+                preferredMountainCandidates
+        );
 
-        Position nearest = pathFinder.findNearestReachableTarget(gameState, currentPosition, candidates);
-        if (nearest != null) {
-            return nearest;
+        if (bestTarget != null) {
+            return bestTarget;
         }
 
         return currentPosition;

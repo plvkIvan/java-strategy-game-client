@@ -13,40 +13,103 @@ import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.GameState;
 
 public class PathFinder {
+    private static final int PREFERRED_TARGET_MAX_EXTRA_COST = 6;
+
     public List<Position> findPath(GameState gameState, Position start, Position target) {
         if (start == null || target == null) {
             return List.of();
         }
+
         if (start.equals(target)) {
             return List.of(start);
         }
 
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+
         if (!nodeMap.containsKey(start) || !nodeMap.containsKey(target)) {
             return List.of();
         }
 
         int mapWidth = getMapWidth(gameState);
         int mapHeight = getMapHeight(gameState);
+
         DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
 
         return buildPath(result.previous, start, target);
     }
 
-    public Position findNearestReachableTarget(GameState gameState, Position start, Set<Position> candidates) {
-        if (candidates.isEmpty()) {
+    public Position findNearestReachableTarget(GameState gameState,
+                                               Position start,
+                                               Set<Position> candidates) {
+        if (start == null || candidates == null || candidates.isEmpty()) {
             return null;
         }
 
         Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+
+        if (!nodeMap.containsKey(start)) {
+            return null;
+        }
+
         int mapWidth = getMapWidth(gameState);
         int mapHeight = getMapHeight(gameState);
+
         DijkstraResult result = runDijkstra(nodeMap, start, null, mapWidth, mapHeight);
+
+        return findLowestCostTarget(result, candidates);
+    }
+
+    public Position findBestReachableTarget(GameState gameState,
+                                            Position start,
+                                            Set<Position> candidates,
+                                            Set<Position> preferredCandidates) {
+        if (start == null || candidates == null || candidates.isEmpty()) {
+            return null;
+        }
+
+        Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+
+        if (!nodeMap.containsKey(start)) {
+            return null;
+        }
+
+        int mapWidth = getMapWidth(gameState);
+        int mapHeight = getMapHeight(gameState);
+
+        DijkstraResult result = runDijkstra(nodeMap, start, null, mapWidth, mapHeight);
+
+        Position nearestTarget = findLowestCostTarget(result, candidates);
+        Position preferredTarget = findLowestCostTarget(result, preferredCandidates);
+
+        if (nearestTarget == null) {
+            return preferredTarget;
+        }
+
+        if (preferredTarget == null) {
+            return nearestTarget;
+        }
+
+        int nearestCost = result.distances.getOrDefault(nearestTarget, Integer.MAX_VALUE);
+        int preferredCost = result.distances.getOrDefault(preferredTarget, Integer.MAX_VALUE);
+
+        if (preferredCost <= nearestCost + PREFERRED_TARGET_MAX_EXTRA_COST) {
+            return preferredTarget;
+        }
+
+        return nearestTarget;
+    }
+
+    private Position findLowestCostTarget(DijkstraResult result, Set<Position> candidates) {
+        if (candidates == null || candidates.isEmpty()) {
+            return null;
+        }
+
         Position bestTarget = null;
         int bestCost = Integer.MAX_VALUE;
 
         for (Position candidate : candidates) {
             Integer cost = result.distances.get(candidate);
+
             if (cost != null && cost < bestCost) {
                 bestCost = cost;
                 bestTarget = candidate;
@@ -56,7 +119,11 @@ public class PathFinder {
         return bestTarget;
     }
 
-    private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap, Position start, Position target, int mapWidth, int mapHeight) {
+    private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap,
+                                       Position start,
+                                       Position target,
+                                       int mapWidth,
+                                       int mapHeight) {
         Map<Position, Integer> distances = new HashMap<>();
         Map<Position, Position> previous = new HashMap<>();
         PriorityQueue<PathNode> queue = new PriorityQueue<>();
@@ -71,17 +138,20 @@ public class PathFinder {
             if (currentNode.distance > distances.getOrDefault(current, Integer.MAX_VALUE)) {
                 continue;
             }
+
             if (target != null && current.equals(target)) {
                 break;
             }
 
             FullMapNode currentMapNode = nodeMap.get(current);
+
             if (currentMapNode == null || !isWalkable(currentMapNode)) {
                 continue;
             }
 
             for (Position neighbor : MapUtils.getNeighbors(current, mapWidth, mapHeight)) {
                 FullMapNode neighborMapNode = nodeMap.get(neighbor);
+
                 if (neighborMapNode == null || !isWalkable(neighborMapNode)) {
                     continue;
                 }
@@ -102,29 +172,35 @@ public class PathFinder {
 
     private Map<Position, FullMapNode> buildNodeMap(GameState gameState) {
         Map<Position, FullMapNode> nodeMap = new HashMap<>();
+
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             nodeMap.put(new Position(node.getX(), node.getY()), node);
         }
+
         return nodeMap;
     }
 
     private int getMapWidth(GameState gameState) {
         int maxX = 0;
+
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             if (node.getX() > maxX) {
                 maxX = node.getX();
             }
         }
+
         return maxX + 1;
     }
 
     private int getMapHeight(GameState gameState) {
         int maxY = 0;
+
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             if (node.getY() > maxY) {
                 maxY = node.getY();
             }
         }
+
         return maxY + 1;
     }
 
@@ -137,18 +213,26 @@ public class PathFinder {
     }
 
     private int getTerrainCost(ETerrain terrain) {
-        return terrain == ETerrain.Mountain ? 2 : 1;
+        if (terrain == ETerrain.Mountain) {
+            return 2;
+        }
+
+        return 1;
     }
 
-    private List<Position> buildPath(Map<Position, Position> previous, Position start, Position target) {
+    private List<Position> buildPath(Map<Position, Position> previous,
+                                     Position start,
+                                     Position target) {
         List<Position> path = new ArrayList<>();
         Position current = target;
 
         while (current != null) {
             path.add(0, current);
+
             if (current.equals(start)) {
                 break;
             }
+
             current = previous.get(current);
         }
 
@@ -163,7 +247,8 @@ public class PathFinder {
         private final Map<Position, Integer> distances;
         private final Map<Position, Position> previous;
 
-        private DijkstraResult(Map<Position, Integer> distances, Map<Position, Position> previous) {
+        private DijkstraResult(Map<Position, Integer> distances,
+                               Map<Position, Position> previous) {
             this.distances = distances;
             this.previous = previous;
         }
