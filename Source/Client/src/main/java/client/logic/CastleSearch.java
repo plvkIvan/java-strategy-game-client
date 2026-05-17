@@ -3,11 +3,10 @@ package client.logic;
 import java.util.HashSet;
 import java.util.Set;
 
+import client.domain.FullMapNodeInfo;
+import client.domain.GameSnapshot;
 import client.domain.Position;
-import messagesbase.messagesfromclient.ETerrain;
-import messagesbase.messagesfromserver.EFortState;
-import messagesbase.messagesfromserver.FullMapNode;
-import messagesbase.messagesfromserver.GameState;
+import client.domain.TerrainType;
 
 public class CastleSearch {
     private final Set<Position> ownHalfPositions;
@@ -16,11 +15,11 @@ public class CastleSearch {
         this.ownHalfPositions = ownHalfPositions;
     }
 
-    public Position chooseTarget(GameState gameState,
+    public Position chooseTarget(GameSnapshot gameSnapshot,
                                  Position currentPosition,
                                  Set<Position> visitedPositions,
                                  PathFinder pathFinder) {
-        Position visibleEnemyCastle = findVisibleEnemyCastle(gameState);
+        Position visibleEnemyCastle = findVisibleEnemyCastle(gameSnapshot);
 
         if (visibleEnemyCastle != null) {
             return visibleEnemyCastle;
@@ -29,8 +28,8 @@ public class CastleSearch {
         Set<Position> candidates = new HashSet<>();
         Set<Position> preferredMountainCandidates = new HashSet<>();
 
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            Position position = new Position(node.getX(), node.getY());
+        for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
+            Position position = node.getPosition();
 
             if (ownHalfPositions.contains(position)) {
                 continue;
@@ -40,19 +39,19 @@ public class CastleSearch {
                 continue;
             }
 
-            if (node.getTerrain() == ETerrain.Water) {
+            if (!node.isWalkable()) {
                 continue;
             }
 
             candidates.add(position);
 
-            if (node.getTerrain() == ETerrain.Mountain) {
+            if (node.getTerrainType() == TerrainType.MOUNTAIN) {
                 preferredMountainCandidates.add(position);
             }
         }
 
         Position bestTarget = pathFinder.findBestReachableTarget(
-                gameState,
+                gameSnapshot,
                 currentPosition,
                 candidates,
                 preferredMountainCandidates
@@ -65,10 +64,10 @@ public class CastleSearch {
         return currentPosition;
     }
 
-    private Position findVisibleEnemyCastle(GameState gameState) {
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            if (node.getFortState() == EFortState.EnemyFortPresent) {
-                return new Position(node.getX(), node.getY());
+    private Position findVisibleEnemyCastle(GameSnapshot gameSnapshot) {
+        for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
+            if (node.isEnemyFortPresent()) {
+                return node.getPosition();
             }
         }
 

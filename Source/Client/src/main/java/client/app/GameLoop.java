@@ -3,6 +3,8 @@ package client.app;
 import java.util.HashSet;
 import java.util.Set;
 
+import client.converter.GameStateConverter;
+import client.domain.GameSnapshot;
 import client.domain.Position;
 import client.logic.CastleSearch;
 import client.logic.MovePlanner;
@@ -23,6 +25,7 @@ public class GameLoop {
     private final NetworkService networkService;
     private final UniquePlayerIdentifier ownClientPlayerID;
     private final GameStateAnalyzer gameStateAnalyzer;
+    private final GameStateConverter gameStateConverter;
     private final PathFinder pathFinder;
     private final MovePlanner movePlanner;
 
@@ -41,6 +44,7 @@ public class GameLoop {
         this.networkService = networkService;
         this.ownClientPlayerID = ownClientPlayerID;
         this.gameStateAnalyzer = gameStateAnalyzer;
+        this.gameStateConverter = new GameStateConverter();
         this.pathFinder = pathFinder;
         this.movePlanner = movePlanner;
     }
@@ -84,7 +88,9 @@ public class GameLoop {
                 continue;
             }
 
-            Position currentPosition = gameStateAnalyzer.findCurrentPosition(gameState);
+            GameSnapshot gameSnapshot = gameStateConverter.toDomain(gameState);
+
+            Position currentPosition = gameSnapshot.getFullGameMap().findMyPlayerPosition();
 
             if (currentPosition == null) {
                 continue;
@@ -102,14 +108,14 @@ public class GameLoop {
 
             if (ownPlayerState.hasCollectedTreasure()) {
                 targetPosition = castleSearch.chooseTarget(
-                        gameState,
+                        gameSnapshot,
                         currentPosition,
                         visitedPositions,
                         pathFinder
                 );
             } else {
                 targetPosition = treasureSearch.chooseTarget(
-                        gameState,
+                        gameSnapshot,
                         currentPosition,
                         visitedPositions,
                         pathFinder
@@ -120,7 +126,7 @@ public class GameLoop {
                 continue;
             }
 
-            EMove move = movePlanner.planNextMove(gameState, currentPosition, targetPosition);
+            EMove move = movePlanner.planNextMove(gameSnapshot, currentPosition, targetPosition);
 
             if (move == null) {
                 continue;

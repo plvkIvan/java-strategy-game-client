@@ -3,11 +3,10 @@ package client.logic;
 import java.util.HashSet;
 import java.util.Set;
 
+import client.domain.FullMapNodeInfo;
+import client.domain.GameSnapshot;
 import client.domain.Position;
-import messagesbase.messagesfromclient.ETerrain;
-import messagesbase.messagesfromserver.ETreasureState;
-import messagesbase.messagesfromserver.FullMapNode;
-import messagesbase.messagesfromserver.GameState;
+import client.domain.TerrainType;
 
 public class TreasureSearch {
     private final Set<Position> ownHalfPositions;
@@ -16,11 +15,11 @@ public class TreasureSearch {
         this.ownHalfPositions = ownHalfPositions;
     }
 
-    public Position chooseTarget(GameState gameState,
+    public Position chooseTarget(GameSnapshot gameSnapshot,
                                  Position currentPosition,
                                  Set<Position> visitedPositions,
                                  PathFinder pathFinder) {
-        Position visibleTreasure = findTreasureIfVisible(gameState);
+        Position visibleTreasure = findTreasureIfVisible(gameSnapshot);
 
         if (visibleTreasure != null) {
             return visibleTreasure;
@@ -29,8 +28,8 @@ public class TreasureSearch {
         Set<Position> candidates = new HashSet<>();
         Set<Position> preferredMountainCandidates = new HashSet<>();
 
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            Position position = new Position(node.getX(), node.getY());
+        for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
+            Position position = node.getPosition();
 
             if (!ownHalfPositions.contains(position)) {
                 continue;
@@ -40,19 +39,19 @@ public class TreasureSearch {
                 continue;
             }
 
-            if (node.getTerrain() == ETerrain.Water) {
+            if (!node.isWalkable()) {
                 continue;
             }
 
             candidates.add(position);
 
-            if (node.getTerrain() == ETerrain.Mountain) {
+            if (node.getTerrainType() == TerrainType.MOUNTAIN) {
                 preferredMountainCandidates.add(position);
             }
         }
 
         Position bestTarget = pathFinder.findBestReachableTarget(
-                gameState,
+                gameSnapshot,
                 currentPosition,
                 candidates,
                 preferredMountainCandidates
@@ -65,10 +64,10 @@ public class TreasureSearch {
         return currentPosition;
     }
 
-    private Position findTreasureIfVisible(GameState gameState) {
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            if (node.getTreasureState() == ETreasureState.MyTreasureIsPresent) {
-                return new Position(node.getX(), node.getY());
+    private Position findTreasureIfVisible(GameSnapshot gameSnapshot) {
+        for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
+            if (node.isMyTreasurePresent()) {
+                return node.getPosition();
             }
         }
 

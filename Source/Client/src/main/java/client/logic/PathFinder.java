@@ -7,15 +7,16 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import client.domain.FullGameMap;
+import client.domain.FullMapNodeInfo;
+import client.domain.GameSnapshot;
 import client.domain.Position;
-import messagesbase.messagesfromclient.ETerrain;
-import messagesbase.messagesfromserver.FullMapNode;
-import messagesbase.messagesfromserver.GameState;
+import client.domain.TerrainType;
 
 public class PathFinder {
     private static final int PREFERRED_TARGET_MAX_EXTRA_COST = 6;
 
-    public List<Position> findPath(GameState gameState, Position start, Position target) {
+    public List<Position> findPath(GameSnapshot gameSnapshot, Position start, Position target) {
         if (start == null || target == null) {
             return List.of();
         }
@@ -24,42 +25,36 @@ public class PathFinder {
             return List.of(start);
         }
 
-        Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+        FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
-        if (!nodeMap.containsKey(start) || !nodeMap.containsKey(target)) {
+        if (!fullGameMap.contains(start) || !fullGameMap.contains(target)) {
             return List.of();
         }
 
-        int mapWidth = getMapWidth(gameState);
-        int mapHeight = getMapHeight(gameState);
-
-        DijkstraResult result = runDijkstra(nodeMap, start, target, mapWidth, mapHeight);
+        DijkstraResult result = runDijkstra(fullGameMap, start, target);
 
         return buildPath(result.previous, start, target);
     }
 
-    public Position findNearestReachableTarget(GameState gameState,
+    public Position findNearestReachableTarget(GameSnapshot gameSnapshot,
                                                Position start,
                                                Set<Position> candidates) {
         if (start == null || candidates == null || candidates.isEmpty()) {
             return null;
         }
 
-        Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+        FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
-        if (!nodeMap.containsKey(start)) {
+        if (!fullGameMap.contains(start)) {
             return null;
         }
 
-        int mapWidth = getMapWidth(gameState);
-        int mapHeight = getMapHeight(gameState);
-
-        DijkstraResult result = runDijkstra(nodeMap, start, null, mapWidth, mapHeight);
+        DijkstraResult result = runDijkstra(fullGameMap, start, null);
 
         return findLowestCostTarget(result, candidates);
     }
 
-    public Position findBestReachableTarget(GameState gameState,
+    public Position findBestReachableTarget(GameSnapshot gameSnapshot,
                                             Position start,
                                             Set<Position> candidates,
                                             Set<Position> preferredCandidates) {
@@ -67,16 +62,13 @@ public class PathFinder {
             return null;
         }
 
-        Map<Position, FullMapNode> nodeMap = buildNodeMap(gameState);
+        FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
-        if (!nodeMap.containsKey(start)) {
+        if (!fullGameMap.contains(start)) {
             return null;
         }
 
-        int mapWidth = getMapWidth(gameState);
-        int mapHeight = getMapHeight(gameState);
-
-        DijkstraResult result = runDijkstra(nodeMap, start, null, mapWidth, mapHeight);
+        DijkstraResult result = runDijkstra(fullGameMap, start, null);
 
         Position nearestTarget = findLowestCostTarget(result, candidates);
         Position preferredTarget = findLowestCostTarget(result, preferredCandidates);
@@ -119,11 +111,9 @@ public class PathFinder {
         return bestTarget;
     }
 
-    private DijkstraResult runDijkstra(Map<Position, FullMapNode> nodeMap,
+    private DijkstraResult runDijkstra(FullGameMap fullGameMap,
                                        Position start,
-                                       Position target,
-                                       int mapWidth,
-                                       int mapHeight) {
+                                       Position target) {
         Map<Position, Integer> distances = new HashMap<>();
         Map<Position, Position> previous = new HashMap<>();
         PriorityQueue<PathNode> queue = new PriorityQueue<>();
@@ -143,16 +133,20 @@ public class PathFinder {
                 break;
             }
 
-            FullMapNode currentMapNode = nodeMap.get(current);
+            FullMapNodeInfo currentMapNode = fullGameMap.getMapNode(current);
 
-            if (currentMapNode == null || !isWalkable(currentMapNode)) {
+            if (currentMapNode == null || !currentMapNode.isWalkable()) {
                 continue;
             }
 
-            for (Position neighbor : MapUtils.getNeighbors(current, mapWidth, mapHeight)) {
-                FullMapNode neighborMapNode = nodeMap.get(neighbor);
+            for (Position neighbor : MapUtils.getNeighbors(
+                    current,
+                    fullGameMap.getWidth(),
+                    fullGameMap.getHeight()
+            )) {
+                FullMapNodeInfo neighborMapNode = fullGameMap.getMapNode(neighbor);
 
-                if (neighborMapNode == null || !isWalkable(neighborMapNode)) {
+                if (neighborMapNode == null || !neighborMapNode.isWalkable()) {
                     continue;
                 }
 
@@ -170,50 +164,12 @@ public class PathFinder {
         return new DijkstraResult(distances, previous);
     }
 
-    private Map<Position, FullMapNode> buildNodeMap(GameState gameState) {
-        Map<Position, FullMapNode> nodeMap = new HashMap<>();
-
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            nodeMap.put(new Position(node.getX(), node.getY()), node);
-        }
-
-        return nodeMap;
+    private int getMoveCost(FullMapNodeInfo from, FullMapNodeInfo to) {
+        return getTerrainCost(from.getTerrainType()) + getTerrainCost(to.getTerrainType());
     }
 
-    private int getMapWidth(GameState gameState) {
-        int maxX = 0;
-
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            if (node.getX() > maxX) {
-                maxX = node.getX();
-            }
-        }
-
-        return maxX + 1;
-    }
-
-    private int getMapHeight(GameState gameState) {
-        int maxY = 0;
-
-        for (FullMapNode node : gameState.getMap().getMapNodes()) {
-            if (node.getY() > maxY) {
-                maxY = node.getY();
-            }
-        }
-
-        return maxY + 1;
-    }
-
-    private boolean isWalkable(FullMapNode node) {
-        return node.getTerrain() != ETerrain.Water;
-    }
-
-    private int getMoveCost(FullMapNode from, FullMapNode to) {
-        return getTerrainCost(from.getTerrain()) + getTerrainCost(to.getTerrain());
-    }
-
-    private int getTerrainCost(ETerrain terrain) {
-        if (terrain == ETerrain.Mountain) {
+    private int getTerrainCost(TerrainType terrainType) {
+        if (terrainType == TerrainType.MOUNTAIN) {
             return 2;
         }
 
