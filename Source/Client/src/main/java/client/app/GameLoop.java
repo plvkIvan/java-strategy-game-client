@@ -12,6 +12,11 @@ import client.logic.PathFinder;
 import client.logic.TreasureSearch;
 import client.network.NetworkService;
 import client.state.GameStateAnalyzer;
+import client.ui.controller.GameUiController;
+import client.ui.model.GameUiModel;
+import client.ui.view.CliGameView;
+import client.ui.view.LegendRenderer;
+import client.ui.view.MapRenderer;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.EPlayerGameState;
@@ -28,6 +33,7 @@ public class GameLoop {
     private final GameStateConverter gameStateConverter;
     private final PathFinder pathFinder;
     private final MovePlanner movePlanner;
+    private final GameUiController gameUiController;
 
     private Set<Position> ownHalfPositions = null;
     private TreasureSearch treasureSearch = null;
@@ -35,6 +41,7 @@ public class GameLoop {
 
     private final Set<Position> visitedPositions = new HashSet<>();
     private boolean printedMilestone = false;
+    private int turnCounter = 0;
 
     public GameLoop(NetworkService networkService,
                     UniquePlayerIdentifier ownClientPlayerID,
@@ -47,6 +54,7 @@ public class GameLoop {
         this.gameStateConverter = new GameStateConverter();
         this.pathFinder = pathFinder;
         this.movePlanner = movePlanner;
+        this.gameUiController = createGameUiController();
     }
 
     public void run() {
@@ -63,12 +71,28 @@ public class GameLoop {
                 continue;
             }
 
+            GameSnapshot gameSnapshot = gameStateConverter.toDomain(gameState);
+
             if (ownPlayerState.getState() == EPlayerGameState.Won) {
+                gameUiController.update(
+                        gameSnapshot,
+                        ownPlayerState.hasCollectedTreasure(),
+                        true,
+                        false,
+                        turnCounter
+                );
                 System.out.println("Game won.");
                 return;
             }
 
             if (ownPlayerState.getState() == EPlayerGameState.Lost) {
+                gameUiController.update(
+                        gameSnapshot,
+                        ownPlayerState.hasCollectedTreasure(),
+                        false,
+                        true,
+                        turnCounter
+                );
                 System.out.println("Game lost.");
                 return;
             }
@@ -88,7 +112,15 @@ public class GameLoop {
                 continue;
             }
 
-            GameSnapshot gameSnapshot = gameStateConverter.toDomain(gameState);
+            turnCounter++;
+
+            gameUiController.update(
+                    gameSnapshot,
+                    ownPlayerState.hasCollectedTreasure(),
+                    false,
+                    false,
+                    turnCounter
+            );
 
             Position currentPosition = gameSnapshot.getFullGameMap().findMyPlayerPosition();
 
@@ -134,6 +166,15 @@ public class GameLoop {
 
             networkService.sendMove(ownClientPlayerID, move);
         }
+    }
+
+    private GameUiController createGameUiController() {
+        GameUiModel gameUiModel = new GameUiModel();
+        MapRenderer mapRenderer = new MapRenderer();
+        LegendRenderer legendRenderer = new LegendRenderer();
+        CliGameView cliGameView = new CliGameView(mapRenderer, legendRenderer);
+
+        return new GameUiController(gameUiModel, cliGameView);
     }
 
     private void sleep() {
