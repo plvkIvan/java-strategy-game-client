@@ -74,7 +74,9 @@ public class GameLoop {
             }
 
             GameSnapshot gameSnapshot = gameStateConverter.toDomain(gameState);
-            updateLastKnownTreasurePosition(gameSnapshot);
+            Position currentPosition = gameSnapshot.getFullGameMap().findMyPlayerPosition();
+
+            updateLastKnownTreasurePosition(gameSnapshot, ownPlayerState, currentPosition);
 
             if (ownPlayerState.getState() == EPlayerGameState.Won) {
                 gameUiController.update(
@@ -128,8 +130,6 @@ public class GameLoop {
                     turnCounter
             );
 
-            Position currentPosition = gameSnapshot.getFullGameMap().findMyPlayerPosition();
-
             if (currentPosition == null) {
                 continue;
             }
@@ -174,13 +174,31 @@ public class GameLoop {
         }
     }
 
-    private void updateLastKnownTreasurePosition(GameSnapshot gameSnapshot) {
+    private void updateLastKnownTreasurePosition(GameSnapshot gameSnapshot,
+                                                 PlayerState ownPlayerState,
+                                                 Position currentPosition) {
+        Position visibleTreasurePosition = findVisibleTreasurePosition(gameSnapshot);
+
+        if (visibleTreasurePosition != null) {
+            lastKnownTreasurePosition = visibleTreasurePosition;
+            return;
+        }
+
+        if (ownPlayerState.hasCollectedTreasure()
+                && lastKnownTreasurePosition == null
+                && currentPosition != null) {
+            lastKnownTreasurePosition = currentPosition;
+        }
+    }
+
+    private Position findVisibleTreasurePosition(GameSnapshot gameSnapshot) {
         for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
             if (node.isMyTreasurePresent()) {
-                lastKnownTreasurePosition = node.getPosition();
-                return;
+                return node.getPosition();
             }
         }
+
+        return null;
     }
 
     private GameUiController createGameUiController() {
