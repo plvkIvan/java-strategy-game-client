@@ -51,6 +51,12 @@ public class MapRenderer {
             return "👾";
         }
 
+        if (snapshot.isTreasureCollected()
+                && snapshot.getTreasurePosition() != null
+                && position.equals(snapshot.getTreasurePosition())) {
+            return "✅";
+        }
+
         if (node.isMyTreasurePresent()) {
             return "💰";
         }

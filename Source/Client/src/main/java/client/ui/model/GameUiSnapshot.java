@@ -7,6 +7,7 @@ public class GameUiSnapshot {
     private final FullGameMap fullGameMap;
     private final Position myPosition;
     private final Position enemyPosition;
+    private final Position treasurePosition;
     private final boolean treasureCollected;
     private final boolean gameWon;
     private final boolean gameLost;
@@ -15,6 +16,7 @@ public class GameUiSnapshot {
     public GameUiSnapshot(FullGameMap fullGameMap,
                           Position myPosition,
                           Position enemyPosition,
+                          Position treasurePosition,
                           boolean treasureCollected,
                           boolean gameWon,
                           boolean gameLost,
@@ -22,6 +24,7 @@ public class GameUiSnapshot {
         this.fullGameMap = fullGameMap;
         this.myPosition = myPosition;
         this.enemyPosition = enemyPosition;
+        this.treasurePosition = treasurePosition;
         this.treasureCollected = treasureCollected;
         this.gameWon = gameWon;
         this.gameLost = gameLost;
@@ -38,6 +41,10 @@ public class GameUiSnapshot {
 
     public Position getEnemyPosition() {
         return enemyPosition;
+    }
+
+    public Position getTreasurePosition() {
+        return treasurePosition;
     }
 
     public boolean isTreasureCollected() {

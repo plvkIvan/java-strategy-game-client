@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import client.converter.GameStateConverter;
+import client.domain.FullMapNodeInfo;
 import client.domain.GameSnapshot;
 import client.domain.Position;
 import client.logic.CastleSearch;
@@ -42,6 +43,7 @@ public class GameLoop {
     private final Set<Position> visitedPositions = new HashSet<>();
     private boolean printedMilestone = false;
     private int turnCounter = 0;
+    private Position lastKnownTreasurePosition = null;
 
     public GameLoop(NetworkService networkService,
                     UniquePlayerIdentifier ownClientPlayerID,
@@ -72,10 +74,12 @@ public class GameLoop {
             }
 
             GameSnapshot gameSnapshot = gameStateConverter.toDomain(gameState);
+            updateLastKnownTreasurePosition(gameSnapshot);
 
             if (ownPlayerState.getState() == EPlayerGameState.Won) {
                 gameUiController.update(
                         gameSnapshot,
+                        lastKnownTreasurePosition,
                         ownPlayerState.hasCollectedTreasure(),
                         true,
                         false,
@@ -88,6 +92,7 @@ public class GameLoop {
             if (ownPlayerState.getState() == EPlayerGameState.Lost) {
                 gameUiController.update(
                         gameSnapshot,
+                        lastKnownTreasurePosition,
                         ownPlayerState.hasCollectedTreasure(),
                         false,
                         true,
@@ -116,6 +121,7 @@ public class GameLoop {
 
             gameUiController.update(
                     gameSnapshot,
+                    lastKnownTreasurePosition,
                     ownPlayerState.hasCollectedTreasure(),
                     false,
                     false,
@@ -165,6 +171,15 @@ public class GameLoop {
             }
 
             networkService.sendMove(ownClientPlayerID, move);
+        }
+    }
+
+    private void updateLastKnownTreasurePosition(GameSnapshot gameSnapshot) {
+        for (FullMapNodeInfo node : gameSnapshot.getFullGameMap().getMapNodes()) {
+            if (node.isMyTreasurePresent()) {
+                lastKnownTreasurePosition = node.getPosition();
+                return;
+            }
         }
     }
 

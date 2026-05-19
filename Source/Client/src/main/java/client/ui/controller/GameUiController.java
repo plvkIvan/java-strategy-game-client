@@ -17,6 +17,7 @@ public class GameUiController {
     }
 
     public void update(GameSnapshot gameSnapshot,
+                       Position treasurePosition,
                        boolean treasureCollected,
                        boolean gameWon,
                        boolean gameLost,
@@ -25,6 +26,7 @@ public class GameUiController {
                 gameSnapshot.getFullGameMap(),
                 gameSnapshot.getFullGameMap().findMyPlayerPosition(),
                 findEnemyPlayerPosition(gameSnapshot),
+                treasurePosition,
                 treasureCollected,
                 gameWon,
                 gameLost,
