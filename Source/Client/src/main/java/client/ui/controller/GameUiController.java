@@ -5,15 +5,12 @@ import client.domain.GameSnapshot;
 import client.domain.Position;
 import client.ui.model.GameUiModel;
 import client.ui.model.GameUiSnapshot;
-import client.ui.view.CliGameView;
 
 public class GameUiController {
     private final GameUiModel gameUiModel;
-    private final CliGameView cliGameView;
 
-    public GameUiController(GameUiModel gameUiModel, CliGameView cliGameView) {
+    public GameUiController(GameUiModel gameUiModel) {
         this.gameUiModel = gameUiModel;
-        this.cliGameView = cliGameView;
     }
 
     public void update(GameSnapshot gameSnapshot,
@@ -34,7 +31,6 @@ public class GameUiController {
         );
 
         gameUiModel.update(snapshot);
-        cliGameView.render(gameUiModel.getCurrentSnapshot());
     }
 
     private Position findEnemyPlayerPosition(GameSnapshot gameSnapshot) {

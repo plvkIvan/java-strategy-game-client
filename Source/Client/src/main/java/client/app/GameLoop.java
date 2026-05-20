@@ -207,7 +207,9 @@ public class GameLoop {
         LegendRenderer legendRenderer = new LegendRenderer();
         CliGameView cliGameView = new CliGameView(mapRenderer, legendRenderer);
 
-        return new GameUiController(gameUiModel, cliGameView);
+        gameUiModel.addGameStateObserver(cliGameView);
+
+        return new GameUiController(gameUiModel);
     }
 
     private void sleep() {

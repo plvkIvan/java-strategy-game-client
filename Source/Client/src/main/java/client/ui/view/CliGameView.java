@@ -1,8 +1,9 @@
 package client.ui.view;
 
 import client.ui.model.GameUiSnapshot;
+import client.ui.observer.Observer;
 
-public class CliGameView {
+public class CliGameView implements Observer<GameUiSnapshot> {
     private final MapRenderer mapRenderer;
     private final LegendRenderer legendRenderer;
     private boolean legendPrinted = false;
@@ -12,7 +13,12 @@ public class CliGameView {
         this.legendRenderer = legendRenderer;
     }
 
-    public void render(GameUiSnapshot snapshot) {
+    @Override
+    public void update(GameUiSnapshot snapshot) {
+        render(snapshot);
+    }
+
+    private void render(GameUiSnapshot snapshot) {
         System.out.println();
         System.out.println("========== GAME STATE ==========");
         System.out.println("Turn: " + snapshot.getTurnCounter());
