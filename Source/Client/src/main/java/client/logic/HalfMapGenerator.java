@@ -20,8 +20,12 @@ import client.validation.rules.ConnectedWalkableFieldsRule;
 import client.validation.rules.MapSizeRule;
 import client.validation.rules.OneCastleRule;
 import client.validation.rules.TerrainAmountRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HalfMapGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(HalfMapGenerator.class);
+
     private static final int HEIGHT = 5;
     private static final int WIDTH = 10;
 
@@ -43,19 +47,27 @@ public class HalfMapGenerator {
     }
 
     public GameHalfMap generate(CastlePlacementTarget castlePlacementTarget) {
+        int attempt = 0;
+
         while (true) {
+            attempt++;
             GameHalfMap gameHalfMap = generateCandidate(castlePlacementTarget);
 
             if (gameHalfMap == null) {
+                logger.debug("Half map generation attempt {} produced no castle position.", attempt);
                 continue;
             }
 
             ValidationNotificationCollector notifications = mapValidator.validate(gameHalfMap);
 
             if (!notifications.hasErrors()) {
+                logger.info("Valid half map generated after {} attempt(s) with castle target {}.",
+                        attempt,
+                        castlePlacementTarget);
                 return gameHalfMap;
             }
 
+            logger.debug("Half map generation attempt {} failed validation.", attempt);
             notifications.printErrorsToSystemErr();
         }
     }
@@ -119,16 +131,25 @@ public class HalfMapGenerator {
     private Position chooseCastlePosition(GameHalfMap gameHalfMap,
                                           CastlePlacementTarget castlePlacementTarget) {
         if (castlePlacementTarget == null || castlePlacementTarget == CastlePlacementTarget.ANY) {
-            return randomCastlePlacer.chooseCastlePosition(
+            Position castlePosition = randomCastlePlacer.chooseCastlePosition(
                     gameHalfMap,
                     CastlePlacementTarget.ANY
             );
+
+            logger.debug("Random castle position selected: {}.", castlePosition);
+            return castlePosition;
         }
 
-        return strategicCastlePlacer.chooseCastlePosition(
+        Position castlePosition = strategicCastlePlacer.chooseCastlePosition(
                 gameHalfMap,
                 castlePlacementTarget
         );
+
+        logger.debug("Strategic castle position selected: {} for target {}.",
+                castlePosition,
+                castlePlacementTarget);
+
+        return castlePosition;
     }
 
     private void placeCastle(GameHalfMap gameHalfMap, Position castlePosition) {

@@ -12,12 +12,19 @@ import client.domain.FullMapNodeInfo;
 import client.domain.GameSnapshot;
 import client.domain.Position;
 import client.domain.TerrainType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PathFinder {
+    private static final Logger logger = LoggerFactory.getLogger(PathFinder.class);
+
     private static final int PREFERRED_TARGET_MAX_EXTRA_COST = 6;
 
     public List<Position> findPath(GameSnapshot gameSnapshot, Position start, Position target) {
         if (start == null || target == null) {
+            logger.warn("Cannot find path because start or target is null. Start: {}, target: {}.",
+                    start,
+                    target);
             return List.of();
         }
 
@@ -28,24 +35,41 @@ public class PathFinder {
         FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
         if (!fullGameMap.contains(start) || !fullGameMap.contains(target)) {
+            logger.warn("Cannot find path because start or target is not part of the map. Start: {}, target: {}.",
+                    start,
+                    target);
             return List.of();
         }
 
         DijkstraResult result = runDijkstra(fullGameMap, start, target);
+        List<Position> path = buildPath(result.previous, start, target);
 
-        return buildPath(result.previous, start, target);
+        if (path.isEmpty()) {
+            logger.warn("No path found from {} to {}.", start, target);
+        } else {
+            logger.debug("Path from {} to {} found with {} positions.",
+                    start,
+                    target,
+                    path.size());
+        }
+
+        return path;
     }
 
     public Position findNearestReachableTarget(GameSnapshot gameSnapshot,
                                                Position start,
                                                Set<Position> candidates) {
         if (start == null || candidates == null || candidates.isEmpty()) {
+            logger.debug("No nearest target search possible. Start: {}, candidates available: {}.",
+                    start,
+                    candidates == null ? 0 : candidates.size());
             return null;
         }
 
         FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
         if (!fullGameMap.contains(start)) {
+            logger.warn("Start position {} is not part of the map.", start);
             return null;
         }
 
@@ -59,12 +83,16 @@ public class PathFinder {
                                             Set<Position> candidates,
                                             Set<Position> preferredCandidates) {
         if (start == null || candidates == null || candidates.isEmpty()) {
+            logger.debug("No best target search possible. Start: {}, candidates available: {}.",
+                    start,
+                    candidates == null ? 0 : candidates.size());
             return null;
         }
 
         FullGameMap fullGameMap = gameSnapshot.getFullGameMap();
 
         if (!fullGameMap.contains(start)) {
+            logger.warn("Start position {} is not part of the map.", start);
             return null;
         }
 
@@ -74,10 +102,12 @@ public class PathFinder {
         Position preferredTarget = findLowestCostTarget(result, preferredCandidates);
 
         if (nearestTarget == null) {
+            logger.debug("No normal target reachable. Preferred target selected: {}.", preferredTarget);
             return preferredTarget;
         }
 
         if (preferredTarget == null) {
+            logger.debug("No preferred target reachable. Nearest target selected: {}.", nearestTarget);
             return nearestTarget;
         }
 
@@ -85,8 +115,19 @@ public class PathFinder {
         int preferredCost = result.distances.getOrDefault(preferredTarget, Integer.MAX_VALUE);
 
         if (preferredCost <= nearestCost + PREFERRED_TARGET_MAX_EXTRA_COST) {
+            logger.debug("Preferred target {} selected with cost {}. Nearest target {} has cost {}.",
+                    preferredTarget,
+                    preferredCost,
+                    nearestTarget,
+                    nearestCost);
             return preferredTarget;
         }
+
+        logger.debug("Nearest target {} selected with cost {}. Preferred target {} was too expensive with cost {}.",
+                nearestTarget,
+                nearestCost,
+                preferredTarget,
+                preferredCost);
 
         return nearestTarget;
     }

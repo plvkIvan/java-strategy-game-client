@@ -23,8 +23,12 @@ import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.EPlayerGameState;
 import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameLoop {
+    private static final Logger logger = LoggerFactory.getLogger(GameLoop.class);
+
     public static final long POLL_INTERVAL_MS = 500;
     private static final int TARGET_VISITED_FIELDS = 16;
 
@@ -60,6 +64,8 @@ public class GameLoop {
     }
 
     public void run() {
+        logger.info("Game loop started.");
+
         while (true) {
             sleep();
 
@@ -70,6 +76,7 @@ public class GameLoop {
             );
 
             if (ownPlayerState == null) {
+                logger.warn("Own player state was not found in current game state.");
                 continue;
             }
 
@@ -87,6 +94,8 @@ public class GameLoop {
                         false,
                         turnCounter
                 );
+
+                logger.info("Game finished with result WON after {} turns.", turnCounter);
                 System.out.println("Game won.");
                 return;
             }
@@ -100,6 +109,8 @@ public class GameLoop {
                         true,
                         turnCounter
                 );
+
+                logger.info("Game finished with result LOST after {} turns.", turnCounter);
                 System.out.println("Game lost.");
                 return;
             }
@@ -108,14 +119,17 @@ public class GameLoop {
                 ownHalfPositions = gameStateAnalyzer.determineOwnHalf(gameState);
 
                 if (ownHalfPositions == null) {
+                    logger.debug("Own half could not be determined yet.");
                     continue;
                 }
 
+                logger.info("Own half determined with {} positions.", ownHalfPositions.size());
                 treasureSearch = new TreasureSearch(ownHalfPositions);
                 castleSearch = new CastleSearch(ownHalfPositions);
             }
 
             if (ownPlayerState.getState() == EPlayerGameState.MustWait) {
+                logger.debug("Player must wait.");
                 continue;
             }
 
@@ -131,6 +145,7 @@ public class GameLoop {
             );
 
             if (currentPosition == null) {
+                logger.warn("Current player position could not be determined.");
                 continue;
             }
 
@@ -138,6 +153,7 @@ public class GameLoop {
             gameStateAnalyzer.expandMountainVision(gameState, currentPosition, visitedPositions);
 
             if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
+                logger.info("Visited field milestone reached: {} different fields.", TARGET_VISITED_FIELDS);
                 System.out.println("Milestone reached: 16 different fields visited.");
                 printedMilestone = true;
             }
@@ -161,14 +177,23 @@ public class GameLoop {
             }
 
             if (targetPosition == null || targetPosition.equals(currentPosition)) {
+                logger.debug("No useful target found for current position {}.", currentPosition);
                 continue;
             }
 
             EMove move = movePlanner.planNextMove(gameSnapshot, currentPosition, targetPosition);
 
             if (move == null) {
+                logger.warn("Move planner could not determine a move from {} to {}.",
+                        currentPosition,
+                        targetPosition);
                 continue;
             }
+
+            logger.debug("Sending move {} from {} towards target {}.",
+                    move,
+                    currentPosition,
+                    targetPosition);
 
             networkService.sendMove(ownClientPlayerID, move);
         }
@@ -181,6 +206,7 @@ public class GameLoop {
 
         if (visibleTreasurePosition != null) {
             lastKnownTreasurePosition = visibleTreasurePosition;
+            logger.debug("Visible treasure position updated to {}.", visibleTreasurePosition);
             return;
         }
 
@@ -188,6 +214,8 @@ public class GameLoop {
                 && lastKnownTreasurePosition == null
                 && currentPosition != null) {
             lastKnownTreasurePosition = currentPosition;
+            logger.debug("Treasure already collected. Using current position {} as fallback.",
+                    currentPosition);
         }
     }
 
@@ -216,6 +244,7 @@ public class GameLoop {
         try {
             Thread.sleep(POLL_INTERVAL_MS);
         } catch (InterruptedException e) {
+            logger.warn("Game loop sleep was interrupted.");
             Thread.currentThread().interrupt();
         }
     }
