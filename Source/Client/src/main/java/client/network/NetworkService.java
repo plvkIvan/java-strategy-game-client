@@ -1,12 +1,6 @@
 package client.network;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-
+import client.exception.NetworkCommunicationException;
 import messagesbase.ResponseEnvelope;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.EMove;
@@ -15,6 +9,13 @@ import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
 
 public class NetworkService {
@@ -30,7 +31,10 @@ public class NetworkService {
                 .build();
     }
 
-    public UniquePlayerIdentifier registerPlayer(String firstName, String lastName, String uAccount) {
+    public UniquePlayerIdentifier registerPlayer(String firstName,
+                                                 String lastName,
+                                                 String uAccount)
+            throws NetworkCommunicationException {
         PlayerRegistration registration = new PlayerRegistration(firstName, lastName, uAccount);
 
         Mono<ResponseEnvelope<UniquePlayerIdentifier>> webAccess = baseWebClient
@@ -40,21 +44,20 @@ public class NetworkService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {});
 
-        ResponseEnvelope<UniquePlayerIdentifier> response = webAccess.block();
+        ResponseEnvelope<UniquePlayerIdentifier> response = executeRequest(
+                webAccess,
+                "player registration"
+        );
 
-        if (response == null) {
-            throw new IllegalStateException("No response for registration.");
-        }
-
-        if (response.getState() == ERequestState.Error) {
-            throw new IllegalStateException("Registration failed: " + response.getExceptionMessage());
-        }
+        ensureSuccessfulResponse(response, "Registration failed");
 
         return response.getData()
-                .orElseThrow(() -> new IllegalStateException("Registration response contained no player ID."));
+                .orElseThrow(() -> new NetworkCommunicationException(
+                        "Registration response contained no player ID."
+                ));
     }
 
-    public void sendHalfMap(PlayerHalfMap halfMap) {
+    public void sendHalfMap(PlayerHalfMap halfMap) throws NetworkCommunicationException {
         Mono<ResponseEnvelope<Void>> webAccess = baseWebClient
                 .method(HttpMethod.POST)
                 .uri("/" + gameId + "/halfmaps")
@@ -62,39 +65,37 @@ public class NetworkService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
 
-        ResponseEnvelope<Void> response = webAccess.block();
+        ResponseEnvelope<Void> response = executeRequest(
+                webAccess,
+                "half map upload"
+        );
 
-        if (response == null) {
-            throw new IllegalStateException("No response after sending half map.");
-        }
-
-        if (response.getState() == ERequestState.Error) {
-            throw new IllegalStateException("Half map upload failed: " + response.getExceptionMessage());
-        }
+        ensureSuccessfulResponse(response, "Half map upload failed");
     }
 
-    public GameState getGameState(UniquePlayerIdentifier playerId) {
+    public GameState getGameState(UniquePlayerIdentifier playerId)
+            throws NetworkCommunicationException {
         Mono<ResponseEnvelope<GameState>> webAccess = baseWebClient
                 .method(HttpMethod.GET)
                 .uri("/" + gameId + "/states/" + playerId.getUniquePlayerID())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
 
-        ResponseEnvelope<GameState> response = webAccess.block();
+        ResponseEnvelope<GameState> response = executeRequest(
+                webAccess,
+                "game state request"
+        );
 
-        if (response == null) {
-            throw new IllegalStateException("No response for game state.");
-        }
-
-        if (response.getState() == ERequestState.Error) {
-            throw new IllegalStateException("Game state request failed: " + response.getExceptionMessage());
-        }
+        ensureSuccessfulResponse(response, "Game state request failed");
 
         return response.getData()
-                .orElseThrow(() -> new IllegalStateException("Game state response contained no data."));
+                .orElseThrow(() -> new NetworkCommunicationException(
+                        "Game state response contained no data."
+                ));
     }
 
-    public void sendMove(UniquePlayerIdentifier playerId, EMove move) {
+    public void sendMove(UniquePlayerIdentifier playerId, EMove move)
+            throws NetworkCommunicationException {
         PlayerMove playerMove = PlayerMove.of(playerId, move);
 
         Mono<ResponseEnvelope<Void>> webAccess = baseWebClient
@@ -104,14 +105,42 @@ public class NetworkService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
 
-        ResponseEnvelope<Void> response = webAccess.block();
+        ResponseEnvelope<Void> response = executeRequest(
+                webAccess,
+                "move upload"
+        );
 
-        if (response == null) {
-            throw new IllegalStateException("No response after sending move.");
+        ensureSuccessfulResponse(response, "Move failed");
+    }
+
+    private <T> ResponseEnvelope<T> executeRequest(Mono<ResponseEnvelope<T>> webAccess,
+                                                   String operation)
+            throws NetworkCommunicationException {
+        try {
+            ResponseEnvelope<T> response = webAccess.block();
+
+            if (response == null) {
+                throw new NetworkCommunicationException(
+                        "No response received during " + operation + "."
+                );
+            }
+
+            return response;
+        } catch (WebClientException exception) {
+            throw new NetworkCommunicationException(
+                    "Network communication failed during " + operation + ".",
+                    exception
+            );
         }
+    }
 
+    private void ensureSuccessfulResponse(ResponseEnvelope<?> response,
+                                          String errorMessage)
+            throws NetworkCommunicationException {
         if (response.getState() == ERequestState.Error) {
-            throw new IllegalStateException("Move failed: " + response.getExceptionMessage());
+            throw new NetworkCommunicationException(
+                    errorMessage + ": " + response.getExceptionMessage()
+            );
         }
     }
 }

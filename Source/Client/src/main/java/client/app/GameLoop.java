@@ -7,6 +7,7 @@ import client.converter.GameStateConverter;
 import client.domain.FullMapNodeInfo;
 import client.domain.GameSnapshot;
 import client.domain.Position;
+import client.exception.NetworkCommunicationException;
 import client.logic.CastleSearch;
 import client.logic.MovePlanner;
 import client.logic.PathFinder;
@@ -63,7 +64,7 @@ public class GameLoop {
         this.gameUiController = createGameUiController();
     }
 
-    public void run() {
+    public void run() throws NetworkCommunicationException {
         logger.info("Game loop started.");
 
         while (true) {

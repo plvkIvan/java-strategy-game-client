@@ -1,23 +1,40 @@
 package client.main;
 
+import client.app.ClientApplication;
+import client.config.ClientConfig;
+import client.exception.ClientException;
+import client.exception.InvalidStartParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import client.app.ClientApplication;
-import client.config.ClientConfig;
-
 public class MainClient {
+	private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
 
 	public static void main(String[] args) {
 		System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 		System.setErr(new PrintStream(System.err, true, StandardCharsets.UTF_8));
 
+		try {
+			runClient(args);
+		} catch (ClientException exception) {
+			logger.error("Client stopped because of a recoverable client error.", exception);
+			System.err.println("Client error: " + exception.getMessage());
+		} catch (RuntimeException exception) {
+			logger.error("Client stopped because of an unexpected error.", exception);
+			System.err.println("Unexpected client error: " + exception.getMessage());
+		}
+	}
+
+	private static void runClient(String[] args) throws ClientException {
 		ClientConfig config = ClientConfig.fromArgs(args);
 
 		if (!config.isValid()) {
-			System.err.println("Not enough start parameters.");
-			System.err.println("Expected: <mode> <serverBaseUrl> <gameId>");
-			return;
+			throw new InvalidStartParameterException(
+					"Not enough start parameters. Expected: <mode> <serverBaseUrl> <gameId>."
+			);
 		}
 
 		ClientApplication application = new ClientApplication(config);

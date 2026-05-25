@@ -3,6 +3,8 @@ package client.app;
 import client.config.ClientConfig;
 import client.converter.HalfMapConverter;
 import client.domain.GameHalfMap;
+import client.exception.ClientException;
+import client.exception.NetworkCommunicationException;
 import client.logic.HalfMapGenerator;
 import client.logic.MovePlanner;
 import client.logic.PathFinder;
@@ -28,8 +30,8 @@ public class ClientApplication {
         this.gameStateAnalyzer = new GameStateAnalyzer();
     }
 
-    public void run() {
-        logger.info("Client application started for game id {}", config.getGameId());
+    public void run() throws ClientException {
+        logger.info("Client application started for game id {}.", config.getGameId());
 
         NetworkService networkService = new NetworkService(
                 config.getServerBaseUrl(),
@@ -64,7 +66,8 @@ public class ClientApplication {
         gameLoop.run();
     }
 
-    private UniquePlayerIdentifier registerPlayer(NetworkService networkService) {
+    private UniquePlayerIdentifier registerPlayer(NetworkService networkService)
+            throws NetworkCommunicationException {
         logger.info("Registering player.");
 
         UniquePlayerIdentifier ownClientPlayerID = networkService.registerPlayer(
@@ -80,7 +83,8 @@ public class ClientApplication {
     }
 
     private GameState waitUntilMustAct(NetworkService networkService,
-                                       UniquePlayerIdentifier ownClientPlayerID) {
+                                       UniquePlayerIdentifier ownClientPlayerID)
+            throws NetworkCommunicationException {
         logger.info("Waiting until player must act before half map upload.");
 
         while (true) {
@@ -111,7 +115,8 @@ public class ClientApplication {
 
     private void generateAndSendHalfMap(NetworkService networkService,
                                         UniquePlayerIdentifier ownClientPlayerID,
-                                        GameState gameStateBeforeMapUpload) {
+                                        GameState gameStateBeforeMapUpload)
+            throws NetworkCommunicationException {
         CastlePlacementTarget castlePlacementTarget =
                 gameStateAnalyzer.determineCastlePlacementTarget(gameStateBeforeMapUpload);
 
@@ -133,7 +138,7 @@ public class ClientApplication {
     private void sleep() {
         try {
             Thread.sleep(GameLoop.POLL_INTERVAL_MS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException exception) {
             logger.warn("Sleep interrupted while waiting before half map upload.");
             Thread.currentThread().interrupt();
         }
