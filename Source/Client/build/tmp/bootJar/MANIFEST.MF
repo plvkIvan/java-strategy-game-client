@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Build-Timestamp: 2026-05-19T16:41:24.482+0200
+Build-Timestamp: 2026-05-22T16:57:12.213+0200
 Created-By: Gradle 8.8
 Build-Jdk: 23.0.1 (Oracle Corporation 23.0.1+11-39)
 Built-By: ivann
