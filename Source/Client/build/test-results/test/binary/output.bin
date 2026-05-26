@@ -1,0 +1,2 @@
+j20:14:09.792 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (1,3).
+†20:14:09.801 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
