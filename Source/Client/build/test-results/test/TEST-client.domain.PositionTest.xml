@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.domain.PositionTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-26T12:13:14" hostname="POLOVKO" time="0.058">
+<testsuite name="client.domain.PositionTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-26T14:08:49" hostname="POLOVKO" time="0.05">
   <properties/>
-  <testcase name="toString_returnsReadableCoordinates()" classname="client.domain.PositionTest" time="0.051"/>
+  <testcase name="toString_returnsReadableCoordinates()" classname="client.domain.PositionTest" time="0.043"/>
   <testcase name="equals_differentCoordinates_areNotEqual()" classname="client.domain.PositionTest" time="0.003"/>
   <testcase name="equalsAndHashCode_sameCoordinates_areEqual()" classname="client.domain.PositionTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
