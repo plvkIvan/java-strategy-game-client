@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.observer.EventPublisherTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-28T18:26:20" hostname="POLOVKO" time="0.006">
+<testsuite name="client.ui.observer.EventPublisherTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:06:28" hostname="POLOVKO" time="0.006">
   <properties/>
   <testcase name="notifyObservers_callsAllRegisteredObservers()" classname="client.ui.observer.EventPublisherTest" time="0.002"/>
   <testcase name="removeObserver_removedObserverIsNotCalled()" classname="client.ui.observer.EventPublisherTest" time="0.001"/>
-  <testcase name="notifyObservers_callsRegisteredObserver()" classname="client.ui.observer.EventPublisherTest" time="0.0"/>
+  <testcase name="notifyObservers_callsRegisteredObserver()" classname="client.ui.observer.EventPublisherTest" time="0.001"/>
   <testcase name="addObserver_withNullObserver_doesNotFail()" classname="client.ui.observer.EventPublisherTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
