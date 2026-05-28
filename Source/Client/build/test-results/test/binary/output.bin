@@ -1,9 +1,9 @@
-j19:28:22.525 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (1,2).
-†19:28:22.539 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
-m19:28:22.625 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
-m19:28:22.630 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
-m19:28:22.634 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
-m19:28:22.639 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
-m19:28:22.644 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
-š19:28:22.648 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
- m19:28:22.650 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.
+j20:20:31.213 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (4,3).
+†20:20:31.233 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
+m20:20:31.371 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
+m20:20:31.384 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
+m20:20:31.390 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
+m20:20:31.397 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
+m20:20:31.401 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
+š20:20:31.406 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
+ m20:20:31.410 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.

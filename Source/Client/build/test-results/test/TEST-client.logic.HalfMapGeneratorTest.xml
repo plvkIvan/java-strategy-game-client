@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-28T17:28:22" hostname="POLOVKO" time="0.365">
+<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-28T18:20:30" hostname="POLOVKO" time="0.394">
   <properties/>
-  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.365"/>
-  <system-out><![CDATA[19:28:22.525 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (1,2).
-19:28:22.539 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
+  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.394"/>
+  <system-out><![CDATA[20:20:31.213 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (4,3).
+20:20:31.233 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
