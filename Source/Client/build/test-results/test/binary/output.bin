@@ -1,8 +1,8 @@
-j22:21:11.641 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (1,1).
-†22:21:11.659 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
+j22:22:54.166 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (8,2).
+†22:22:54.180 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
 
-m22:21:11.764 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
-m22:21:11.770 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
-m22:21:11.771 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
-m22:21:11.773 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
-m22:21:11.777 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
+m22:22:54.247 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
+m22:22:54.253 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
+m22:22:54.256 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
+m22:22:54.260 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
+m22:22:54.264 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
