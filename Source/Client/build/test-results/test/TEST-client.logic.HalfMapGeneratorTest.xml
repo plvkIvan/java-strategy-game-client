@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-26T20:22:53" hostname="POLOVKO" time="0.357">
+<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-28T14:18:39" hostname="POLOVKO" time="0.187">
   <properties/>
-  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.357"/>
-  <system-out><![CDATA[22:22:54.166 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (8,2).
-22:22:54.180 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
+  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.187"/>
+  <system-out><![CDATA[16:18:39.277 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (7,2).
+16:18:39.286 [Test worker] DEBUG client.logic.HalfMapGenerator - Half map generation attempt 1 failed validation.
+16:18:39.288 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (6,2).
+16:18:39.288 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 2 attempt(s) with castle target ANY.
 ]]></system-out>
-  <system-err><![CDATA[]]></system-err>
+  <system-err><![CDATA[[ERROR] BorderWalkableRule: Left border needs at least 3 walkable fields, but got 2.
+]]></system-err>
 </testsuite>
