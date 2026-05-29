@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.validation.rules.TerrainAmountRuleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:08:02" hostname="POLOVKO" time="0.006">
+<testsuite name="client.validation.rules.TerrainAmountRuleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.006">
   <properties/>
-  <testcase name="missingTerrainAmount_addsValidationError()" classname="client.validation.rules.TerrainAmountRuleTest" time="0.004"/>
+  <testcase name="missingTerrainAmount_addsValidationError()" classname="client.validation.rules.TerrainAmountRuleTest" time="0.005"/>
   <testcase name="validTerrainAmount_addsNoValidationError()" classname="client.validation.rules.TerrainAmountRuleTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

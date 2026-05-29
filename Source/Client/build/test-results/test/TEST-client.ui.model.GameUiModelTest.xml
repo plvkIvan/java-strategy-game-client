@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.model.GameUiModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:08:02" hostname="POLOVKO" time="0.007">
+<testsuite name="client.ui.model.GameUiModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.012">
   <properties/>
-  <testcase name="removeGameStateObserver_removedObserverIsNotNotified()" classname="client.ui.model.GameUiModelTest" time="0.003"/>
-  <testcase name="update_storesCurrentSnapshot()" classname="client.ui.model.GameUiModelTest" time="0.001"/>
-  <testcase name="update_notifiesRegisteredObserver()" classname="client.ui.model.GameUiModelTest" time="0.001"/>
+  <testcase name="removeGameStateObserver_removedObserverIsNotNotified()" classname="client.ui.model.GameUiModelTest" time="0.01"/>
+  <testcase name="update_storesCurrentSnapshot()" classname="client.ui.model.GameUiModelTest" time="0.0"/>
+  <testcase name="update_notifiesRegisteredObserver()" classname="client.ui.model.GameUiModelTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
