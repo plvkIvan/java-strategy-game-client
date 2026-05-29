@@ -1,9 +1,10 @@
-j19:58:37.917 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (3,2).
-†19:58:37.933 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
-m19:58:38.015 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
-m19:58:38.019 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
-m19:58:38.021 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
-m19:58:38.024 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
-! m19:58:38.028 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
-#"š19:58:38.031 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
-#$m19:58:38.035 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.
+j21:40:38.896 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (1,1).
+†21:40:38.913 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
+m21:40:38.976 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
+m21:40:38.980 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
+m21:40:38.982 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
+m21:40:38.985 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
+! m21:40:38.988 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
+#"š21:40:38.991 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
+#$m21:40:38.992 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.
+&'{21:40:38.997 [Test worker] DEBUG client.logic.PathFinder - No preferred target reachable. Nearest target selected: (1,0).

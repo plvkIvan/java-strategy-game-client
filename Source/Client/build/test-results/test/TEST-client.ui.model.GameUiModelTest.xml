@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.model.GameUiModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:38" hostname="POLOVKO" time="0.006">
+<testsuite name="client.ui.model.GameUiModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T19:40:39" hostname="POLOVKO" time="0.005">
   <properties/>
   <testcase name="removeGameStateObserver_removedObserverIsNotNotified()" classname="client.ui.model.GameUiModelTest" time="0.003"/>
   <testcase name="update_storesCurrentSnapshot()" classname="client.ui.model.GameUiModelTest" time="0.001"/>

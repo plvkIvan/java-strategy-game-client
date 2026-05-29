@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.validation.rules.ConnectedWalkableFieldsRuleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:38" hostname="POLOVKO" time="0.01">
+<testsuite name="client.validation.rules.ConnectedWalkableFieldsRuleTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T19:40:39" hostname="POLOVKO" time="0.006">
   <properties/>
-  <testcase name="disconnectedWalkableFields_addsValidationError()" classname="client.validation.rules.ConnectedWalkableFieldsRuleTest" time="0.008"/>
+  <testcase name="disconnectedWalkableFields_addsValidationError()" classname="client.validation.rules.ConnectedWalkableFieldsRuleTest" time="0.005"/>
   <testcase name="connectedWalkableFields_addsNoValidationError()" classname="client.validation.rules.ConnectedWalkableFieldsRuleTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

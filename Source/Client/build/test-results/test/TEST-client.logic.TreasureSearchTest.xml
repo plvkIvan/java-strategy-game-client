@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="client.logic.TreasureSearchTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T19:40:38" hostname="POLOVKO" time="0.004">
+  <properties/>
+  <testcase name="chooseTarget_whenTreasureIsVisible_returnsTreasurePosition()" classname="client.logic.TreasureSearchTest" time="0.002"/>
+  <testcase name="chooseTarget_whenNoTreasureVisible_returnsNearestUnvisitedOwnHalfPosition()" classname="client.logic.TreasureSearchTest" time="0.001"/>
+  <system-out><![CDATA[21:40:38.997 [Test worker] DEBUG client.logic.PathFinder - No preferred target reachable. Nearest target selected: (1,0).
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
