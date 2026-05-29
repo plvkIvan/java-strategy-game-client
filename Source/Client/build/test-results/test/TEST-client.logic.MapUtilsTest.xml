@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.MapUtilsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.004">
+<testsuite name="client.logic.MapUtilsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:37" hostname="POLOVKO" time="0.003">
   <properties/>
-  <testcase name="getNeighbors_cornerPosition_returnsTwoNeighbors()" classname="client.logic.MapUtilsTest" time="0.002"/>
+  <testcase name="getNeighbors_cornerPosition_returnsTwoNeighbors()" classname="client.logic.MapUtilsTest" time="0.001"/>
   <testcase name="getNeighbors_middlePosition_returnsFourNeighbors()" classname="client.logic.MapUtilsTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

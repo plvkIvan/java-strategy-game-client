@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.MovePlannerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.001">
+<testsuite name="client.logic.MovePlannerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:38" hostname="POLOVKO" time="0.001">
   <properties/>
   <testcase name="adjacentRight_returnsMoveRight()" classname="client.logic.MovePlannerTest" time="0.001"/>
-  <system-out><![CDATA[11:26:25.527 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
+  <system-out><![CDATA[19:58:38.028 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (1,0) found with 2 positions.
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.PathFinderTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.002">
+<testsuite name="client.logic.PathFinderTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:38" hostname="POLOVKO" time="0.004">
   <properties/>
   <testcase name="findPath_targetNotInMap_returnsEmptyPath()" classname="client.logic.PathFinderTest" time="0.001"/>
-  <testcase name="findPath_connectedGrassFields_returnsPath()" classname="client.logic.PathFinderTest" time="0.001"/>
-  <system-out><![CDATA[11:26:25.530 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
-11:26:25.532 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.
+  <testcase name="findPath_connectedGrassFields_returnsPath()" classname="client.logic.PathFinderTest" time="0.002"/>
+  <system-out><![CDATA[19:58:38.031 [Test worker] WARN  client.logic.PathFinder - Cannot find path because start or target is not part of the map. Start: (0,0), target: (9,9).
+19:58:38.035 [Test worker] DEBUG client.logic.PathFinder - Path from (0,0) to (2,0) found with 3 positions.
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

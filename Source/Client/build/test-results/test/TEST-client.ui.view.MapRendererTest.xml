@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.view.MapRendererTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.005">
+<testsuite name="client.ui.view.MapRendererTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:38" hostname="POLOVKO" time="0.005">
   <properties/>
   <testcase name="render_displaysPlayerTreasureCastlesAndTerrain()" classname="client.ui.view.MapRendererTest" time="0.002"/>
   <testcase name="render_whenTreasureCollected_displaysCollectedTreasureSymbol()" classname="client.ui.view.MapRendererTest" time="0.001"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.config.ClientConfigTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:24" hostname="POLOVKO" time="0.061">
+<testsuite name="client.config.ClientConfigTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:37" hostname="POLOVKO" time="0.062">
   <properties/>
-  <testcase name="fromArgs_withMissingArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.046"/>
+  <testcase name="fromArgs_withMissingArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.049"/>
   <testcase name="fromArgs_withNullArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.001"/>
   <testcase name="fromArgs_withValidArguments_createsValidConfig()" classname="client.config.ClientConfigTest" time="0.009"/>
   <system-out><![CDATA[]]></system-out>

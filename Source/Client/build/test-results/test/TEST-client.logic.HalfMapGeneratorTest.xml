@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T09:26:25" hostname="POLOVKO" time="0.392">
+<testsuite name="client.logic.HalfMapGeneratorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T17:58:37" hostname="POLOVKO" time="0.408">
   <properties/>
-  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.392"/>
-  <system-out><![CDATA[11:26:25.426 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (8,2).
-11:26:25.446 [Test worker] DEBUG client.logic.HalfMapGenerator - Half map generation attempt 1 failed validation.
-11:26:25.449 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (8,3).
-11:26:25.450 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 2 attempt(s) with castle target ANY.
+  <testcase name="generate_returnsValidHalfMapWithOneCastle()" classname="client.logic.HalfMapGeneratorTest" time="0.408"/>
+  <system-out><![CDATA[19:58:37.917 [Test worker] DEBUG client.logic.HalfMapGenerator - Random castle position selected: (3,2).
+19:58:37.933 [Test worker] INFO  client.logic.HalfMapGenerator - Valid half map generated after 1 attempt(s) with castle target ANY.
 ]]></system-out>
-  <system-err><![CDATA[[ERROR] ConnectedWalkableFieldsRule: Not all walkable fields are connected. Reachable: 42, walkable total: 43.
-]]></system-err>
+  <system-err><![CDATA[]]></system-err>
 </testsuite>
