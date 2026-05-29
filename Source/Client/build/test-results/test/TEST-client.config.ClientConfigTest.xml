@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.config.ClientConfigTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:06:27" hostname="POLOVKO" time="0.057">
+<testsuite name="client.config.ClientConfigTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:08:01" hostname="POLOVKO" time="0.062">
   <properties/>
-  <testcase name="fromArgs_withMissingArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.046"/>
+  <testcase name="fromArgs_withMissingArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.047"/>
   <testcase name="fromArgs_withNullArguments_createsInvalidConfig()" classname="client.config.ClientConfigTest" time="0.0"/>
-  <testcase name="fromArgs_withValidArguments_createsValidConfig()" classname="client.config.ClientConfigTest" time="0.008"/>
+  <testcase name="fromArgs_withValidArguments_createsValidConfig()" classname="client.config.ClientConfigTest" time="0.011"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

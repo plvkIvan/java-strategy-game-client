@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.logic.MovePlannerParameterizedTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:06:28" hostname="POLOVKO" time="0.036">
+<testsuite name="client.logic.MovePlannerParameterizedTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-28T22:08:02" hostname="POLOVKO" time="0.026">
   <properties/>
-  <testcase name="[1] start=(1,1), target=(1,0), expectedMove=Up" classname="client.logic.MovePlannerParameterizedTest" time="0.026"/>
-  <testcase name="[2] start=(1,1), target=(1,2), expectedMove=Down" classname="client.logic.MovePlannerParameterizedTest" time="0.001"/>
-  <testcase name="[3] start=(1,1), target=(0,1), expectedMove=Left" classname="client.logic.MovePlannerParameterizedTest" time="0.001"/>
+  <testcase name="[1] start=(1,1), target=(1,0), expectedMove=Up" classname="client.logic.MovePlannerParameterizedTest" time="0.016"/>
+  <testcase name="[2] start=(1,1), target=(1,2), expectedMove=Down" classname="client.logic.MovePlannerParameterizedTest" time="0.002"/>
+  <testcase name="[3] start=(1,1), target=(0,1), expectedMove=Left" classname="client.logic.MovePlannerParameterizedTest" time="0.002"/>
   <testcase name="[4] start=(1,1), target=(2,1), expectedMove=Right" classname="client.logic.MovePlannerParameterizedTest" time="0.001"/>
-  <system-out><![CDATA[00:06:28.550 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
-00:06:28.555 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
-00:06:28.557 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
-00:06:28.561 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
+  <system-out><![CDATA[00:08:02.055 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,0) found with 2 positions.
+00:08:02.061 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (1,2) found with 2 positions.
+00:08:02.064 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (0,1) found with 2 positions.
+00:08:02.066 [Test worker] DEBUG client.logic.PathFinder - Path from (1,1) to (2,1) found with 2 positions.
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
