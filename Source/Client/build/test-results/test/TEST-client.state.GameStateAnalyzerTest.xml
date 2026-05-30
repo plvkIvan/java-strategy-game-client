@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.state.GameStateAnalyzerTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-05-29T19:40:38" hostname="POLOVKO" time="0.02">
+<testsuite name="client.state.GameStateAnalyzerTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-05-30T16:03:07" hostname="POLOVKO" time="0.017">
   <properties/>
   <testcase name="determineOwnHalf_whenMapHasLessThanHundredNodes_returnsNull()" classname="client.state.GameStateAnalyzerTest" time="0.003"/>
   <testcase name="findCurrentPosition_whenMyPlayerIsPresent_returnsPosition()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
   <testcase name="expandMountainVision_whenCurrentPositionIsGrass_doesNotAddNeighborPositions()" classname="client.state.GameStateAnalyzerTest" time="0.0"/>
   <testcase name="determineCastlePlacementTarget_whenGameStateIsNull_returnsAny()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
-  <testcase name="findOwnPlayerState_whenPlayerDoesNotExist_returnsNull()" classname="client.state.GameStateAnalyzerTest" time="0.002"/>
+  <testcase name="findOwnPlayerState_whenPlayerDoesNotExist_returnsNull()" classname="client.state.GameStateAnalyzerTest" time="0.003"/>
   <testcase name="expandMountainVision_whenCurrentPositionIsMountain_addsNeighborPositions()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
-  <testcase name="determineCastlePlacementTarget_whenEnemyHalfIsBottom_returnsTopRight()" classname="client.state.GameStateAnalyzerTest" time="0.0"/>
+  <testcase name="determineCastlePlacementTarget_whenEnemyHalfIsBottom_returnsTopRight()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
   <testcase name="determineCastlePlacementTarget_whenEnemyHalfStartsAtOrigin_returnsBottomRight()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
   <testcase name="determineOwnHalf_whenOwnCastleIsOnLeftSide_returnsLeftHalf()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
   <testcase name="determineCastlePlacementTarget_whenEnemyHalfIsRight_returnsBottomLeft()" classname="client.state.GameStateAnalyzerTest" time="0.0"/>
-  <testcase name="findOwnPlayerState_whenPlayerExists_returnsPlayerState()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
-  <testcase name="findCurrentPosition_whenMyPlayerIsMissing_returnsNull()" classname="client.state.GameStateAnalyzerTest" time="0.001"/>
+  <testcase name="findOwnPlayerState_whenPlayerExists_returnsPlayerState()" classname="client.state.GameStateAnalyzerTest" time="0.0"/>
+  <testcase name="findCurrentPosition_whenMyPlayerIsMissing_returnsNull()" classname="client.state.GameStateAnalyzerTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

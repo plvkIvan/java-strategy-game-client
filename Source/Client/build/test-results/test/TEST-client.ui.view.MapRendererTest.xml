@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.view.MapRendererTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T19:40:39" hostname="POLOVKO" time="0.005">
+<testsuite name="client.ui.view.MapRendererTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-30T16:03:07" hostname="POLOVKO" time="0.003">
   <properties/>
-  <testcase name="render_displaysPlayerTreasureCastlesAndTerrain()" classname="client.ui.view.MapRendererTest" time="0.002"/>
+  <testcase name="render_displaysPlayerTreasureCastlesAndTerrain()" classname="client.ui.view.MapRendererTest" time="0.001"/>
   <testcase name="render_whenTreasureCollected_displaysCollectedTreasureSymbol()" classname="client.ui.view.MapRendererTest" time="0.0"/>
-  <testcase name="render_whenBothPlayersOnSamePosition_displaysSwords()" classname="client.ui.view.MapRendererTest" time="0.001"/>
+  <testcase name="render_whenBothPlayersOnSamePosition_displaysSwords()" classname="client.ui.view.MapRendererTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
