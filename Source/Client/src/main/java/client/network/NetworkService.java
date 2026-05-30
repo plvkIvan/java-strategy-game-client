@@ -42,7 +42,8 @@ public class NetworkService {
                 .uri("/" + gameId + "/players")
                 .body(BodyInserters.fromValue(registration))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<UniquePlayerIdentifier>>() {
+                });
 
         ResponseEnvelope<UniquePlayerIdentifier> response = executeRequest(
                 webAccess,
@@ -63,7 +64,8 @@ public class NetworkService {
                 .uri("/" + gameId + "/halfmaps")
                 .body(BodyInserters.fromValue(halfMap))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {
+                });
 
         ResponseEnvelope<Void> response = executeRequest(
                 webAccess,
@@ -79,7 +81,8 @@ public class NetworkService {
                 .method(HttpMethod.GET)
                 .uri("/" + gameId + "/states/" + playerId.getUniquePlayerID())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<GameState>>() {
+                });
 
         ResponseEnvelope<GameState> response = executeRequest(
                 webAccess,
@@ -103,7 +106,8 @@ public class NetworkService {
                 .uri("/" + gameId + "/moves")
                 .body(BodyInserters.fromValue(playerMove))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {});
+                .bodyToMono(new ParameterizedTypeReference<ResponseEnvelope<Void>>() {
+                });
 
         ResponseEnvelope<Void> response = executeRequest(
                 webAccess,
