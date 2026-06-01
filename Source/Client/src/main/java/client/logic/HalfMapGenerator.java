@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import client.domain.GameHalfMap;
+import client.domain.GameMapConstants;
 import client.domain.MapNode;
 import client.domain.Position;
 import client.domain.TerrainType;
@@ -25,16 +26,6 @@ import org.slf4j.LoggerFactory;
 
 public class HalfMapGenerator {
     private static final Logger logger = LoggerFactory.getLogger(HalfMapGenerator.class);
-
-    private static final int HEIGHT = 5;
-    private static final int WIDTH = 10;
-
-    private static final int MIN_MOUNTAIN = 5;
-    private static final int MIN_WATER = 7;
-    private static final int MIN_GRASS = 24;
-
-    private static final int MIN_WALKABLE_ROW = 6;
-    private static final int MIN_WALKABLE_COLUMN = 3;
 
     private final Random rand = new Random();
 
@@ -93,19 +84,19 @@ public class HalfMapGenerator {
     private List<TerrainType> createTerrainTypes() {
         List<TerrainType> terrainTypes = new ArrayList<>();
 
-        for (int i = 0; i < MIN_MOUNTAIN; i++) {
+        for (int i = 0; i < GameMapConstants.MIN_MOUNTAIN_FIELDS; i++) {
             terrainTypes.add(TerrainType.MOUNTAIN);
         }
 
-        for (int i = 0; i < MIN_WATER; i++) {
+        for (int i = 0; i < GameMapConstants.MIN_WATER_FIELDS; i++) {
             terrainTypes.add(TerrainType.WATER);
         }
 
-        for (int i = 0; i < MIN_GRASS; i++) {
+        for (int i = 0; i < GameMapConstants.MIN_GRASS_FIELDS; i++) {
             terrainTypes.add(TerrainType.GRASS);
         }
 
-        int numberEmptyNodes = WIDTH * HEIGHT - terrainTypes.size();
+        int numberEmptyNodes = GameMapConstants.HALF_MAP_SIZE - terrainTypes.size();
 
         for (int i = 0; i < numberEmptyNodes; i++) {
             terrainTypes.add(TerrainType.GRASS);
@@ -118,8 +109,8 @@ public class HalfMapGenerator {
         GameHalfMap gameHalfMap = new GameHalfMap();
         int index = 0;
 
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < GameMapConstants.HALF_MAP_HEIGHT; y++) {
+            for (int x = 0; x < GameMapConstants.HALF_MAP_WIDTH; x++) {
                 TerrainType terrainType = terrainTypes.get(index++);
                 gameHalfMap.addMapNode(new MapNode(new Position(x, y), terrainType, false));
             }
@@ -164,18 +155,30 @@ public class HalfMapGenerator {
     private MapValidator createMapValidator() {
         List<MapValidationRule> validationRules = new ArrayList<>();
 
-        validationRules.add(new MapSizeRule(WIDTH * HEIGHT));
+        validationRules.add(new MapSizeRule(GameMapConstants.HALF_MAP_SIZE));
         validationRules.add(new OneCastleRule());
-        validationRules.add(new TerrainAmountRule(TerrainType.MOUNTAIN, MIN_MOUNTAIN));
-        validationRules.add(new TerrainAmountRule(TerrainType.WATER, MIN_WATER));
-        validationRules.add(new TerrainAmountRule(TerrainType.GRASS, MIN_GRASS));
-        validationRules.add(new BorderWalkableRule(
-                WIDTH,
-                HEIGHT,
-                MIN_WALKABLE_ROW,
-                MIN_WALKABLE_COLUMN
+        validationRules.add(new TerrainAmountRule(
+                TerrainType.MOUNTAIN,
+                GameMapConstants.MIN_MOUNTAIN_FIELDS
         ));
-        validationRules.add(new ConnectedWalkableFieldsRule(WIDTH, HEIGHT));
+        validationRules.add(new TerrainAmountRule(
+                TerrainType.WATER,
+                GameMapConstants.MIN_WATER_FIELDS
+        ));
+        validationRules.add(new TerrainAmountRule(
+                TerrainType.GRASS,
+                GameMapConstants.MIN_GRASS_FIELDS
+        ));
+        validationRules.add(new BorderWalkableRule(
+                GameMapConstants.HALF_MAP_WIDTH,
+                GameMapConstants.HALF_MAP_HEIGHT,
+                GameMapConstants.MIN_WALKABLE_ROW_FIELDS,
+                GameMapConstants.MIN_WALKABLE_COLUMN_FIELDS
+        ));
+        validationRules.add(new ConnectedWalkableFieldsRule(
+                GameMapConstants.HALF_MAP_WIDTH,
+                GameMapConstants.HALF_MAP_HEIGHT
+        ));
 
         return new MapValidator(validationRules);
     }

@@ -19,6 +19,8 @@ public class PathFinder {
     private static final Logger logger = LoggerFactory.getLogger(PathFinder.class);
 
     private static final int PREFERRED_TARGET_MAX_EXTRA_COST = 6;
+    private static final int DEFAULT_TERRAIN_COST = 1;
+    private static final int MOUNTAIN_TERRAIN_COST = 2;
 
     public List<Position> findPath(GameSnapshot gameSnapshot, Position start, Position target) {
         if (start == null || target == null) {
@@ -211,10 +213,10 @@ public class PathFinder {
 
     private int getTerrainCost(TerrainType terrainType) {
         if (terrainType == TerrainType.MOUNTAIN) {
-            return 2;
+            return MOUNTAIN_TERRAIN_COST;
         }
 
-        return 1;
+        return DEFAULT_TERRAIN_COST;
     }
 
     private List<Position> buildPath(Map<Position, Position> previous,

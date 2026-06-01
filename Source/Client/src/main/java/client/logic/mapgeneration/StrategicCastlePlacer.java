@@ -5,21 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import client.domain.GameHalfMap;
+import client.domain.GameMapConstants;
 import client.domain.MapNode;
 import client.domain.Position;
 import client.domain.TerrainType;
 
 public class StrategicCastlePlacer implements CastlePlacer {
-    private static final int LEFT_MIN_X = 0;
-    private static final int LEFT_MAX_X = 4;
-    private static final int RIGHT_MIN_X = 5;
-    private static final int RIGHT_MAX_X = 9;
-
-    private static final int TOP_MIN_Y = 0;
-    private static final int TOP_MAX_Y = 2;
-    private static final int BOTTOM_MIN_Y = 2;
-    private static final int BOTTOM_MAX_Y = 4;
-
     private final Random random;
 
     public StrategicCastlePlacer(Random random) {
@@ -67,16 +58,32 @@ public class StrategicCastlePlacer implements CastlePlacer {
     private boolean isInTargetRegion(Position position, CastlePlacementTarget target) {
         switch (target) {
             case TOP_LEFT:
-                return isInside(position, LEFT_MIN_X, LEFT_MAX_X, TOP_MIN_Y, TOP_MAX_Y);
+                return isInside(position,
+                        GameMapConstants.CASTLE_LEFT_MIN_X,
+                        GameMapConstants.CASTLE_LEFT_MAX_X,
+                        GameMapConstants.CASTLE_TOP_MIN_Y,
+                        GameMapConstants.CASTLE_TOP_MAX_Y);
 
             case TOP_RIGHT:
-                return isInside(position, RIGHT_MIN_X, RIGHT_MAX_X, TOP_MIN_Y, TOP_MAX_Y);
+                return isInside(position,
+                        GameMapConstants.CASTLE_RIGHT_MIN_X,
+                        GameMapConstants.CASTLE_RIGHT_MAX_X,
+                        GameMapConstants.CASTLE_TOP_MIN_Y,
+                        GameMapConstants.CASTLE_TOP_MAX_Y);
 
             case BOTTOM_LEFT:
-                return isInside(position, LEFT_MIN_X, LEFT_MAX_X, BOTTOM_MIN_Y, BOTTOM_MAX_Y);
+                return isInside(position,
+                        GameMapConstants.CASTLE_LEFT_MIN_X,
+                        GameMapConstants.CASTLE_LEFT_MAX_X,
+                        GameMapConstants.CASTLE_BOTTOM_MIN_Y,
+                        GameMapConstants.CASTLE_BOTTOM_MAX_Y);
 
             case BOTTOM_RIGHT:
-                return isInside(position, RIGHT_MIN_X, RIGHT_MAX_X, BOTTOM_MIN_Y, BOTTOM_MAX_Y);
+                return isInside(position,
+                        GameMapConstants.CASTLE_RIGHT_MIN_X,
+                        GameMapConstants.CASTLE_RIGHT_MAX_X,
+                        GameMapConstants.CASTLE_BOTTOM_MIN_Y,
+                        GameMapConstants.CASTLE_BOTTOM_MAX_Y);
 
             default:
                 return false;

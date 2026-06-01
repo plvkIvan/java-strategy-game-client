@@ -1,11 +1,12 @@
 package client.state;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Collection;
 
-import client.logic.mapgeneration.CastlePlacementTarget;
+import client.domain.GameMapConstants;
 import client.domain.Position;
+import client.logic.mapgeneration.CastlePlacementTarget;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.ETerrain;
 import messagesbase.messagesfromserver.EFortState;
@@ -39,7 +40,7 @@ public class GameStateAnalyzer {
     public Set<Position> determineOwnHalf(GameState gameState) {
         Set<FullMapNode> mapNodes = new HashSet<>(gameState.getMap().getMapNodes());
 
-        if (mapNodes.size() < 100) {
+        if (mapNodes.size() < GameMapConstants.FULL_MAP_SIZE) {
             return null;
         }
 
@@ -69,27 +70,27 @@ public class GameStateAnalyzer {
 
         Set<Position> ownHalf = new HashSet<>();
 
-        if (mapWidth > 10) {
-            boolean ownIsLeft = myFort.getX() <= 9;
+        if (mapWidth > GameMapConstants.HALF_MAP_WIDTH) {
+            boolean ownIsLeft = myFort.getX() <= GameMapConstants.LAST_LEFT_HALF_X;
 
             for (FullMapNode node : mapNodes) {
-                if (ownIsLeft && node.getX() <= 9) {
+                if (ownIsLeft && node.getX() <= GameMapConstants.LAST_LEFT_HALF_X) {
                     ownHalf.add(new Position(node.getX(), node.getY()));
                 }
 
-                if (!ownIsLeft && node.getX() >= 10) {
+                if (!ownIsLeft && node.getX() >= GameMapConstants.FIRST_RIGHT_HALF_X) {
                     ownHalf.add(new Position(node.getX(), node.getY()));
                 }
             }
         } else {
-            boolean ownIsTop = myFort.getY() <= 4;
+            boolean ownIsTop = myFort.getY() <= GameMapConstants.LAST_TOP_HALF_Y;
 
             for (FullMapNode node : mapNodes) {
-                if (ownIsTop && node.getY() <= 4) {
+                if (ownIsTop && node.getY() <= GameMapConstants.LAST_TOP_HALF_Y) {
                     ownHalf.add(new Position(node.getX(), node.getY()));
                 }
 
-                if (!ownIsTop && node.getY() >= 5) {
+                if (!ownIsTop && node.getY() >= GameMapConstants.FIRST_BOTTOM_HALF_Y) {
                     ownHalf.add(new Position(node.getX(), node.getY()));
                 }
             }

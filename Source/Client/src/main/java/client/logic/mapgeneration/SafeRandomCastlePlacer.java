@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import client.domain.GameHalfMap;
+import client.domain.GameMapConstants;
 import client.domain.MapNode;
 import client.domain.Position;
 import client.domain.TerrainType;
 
 public class SafeRandomCastlePlacer implements CastlePlacer {
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 5;
-
     private final Random random;
 
     public SafeRandomCastlePlacer(Random random) {
@@ -28,9 +26,9 @@ public class SafeRandomCastlePlacer implements CastlePlacer {
             Position position = mapNode.getPosition();
 
             boolean isInside = position.getX() > 0
-                    && position.getX() < WIDTH - 1
+                    && position.getX() < GameMapConstants.HALF_MAP_WIDTH - 1
                     && position.getY() > 0
-                    && position.getY() < HEIGHT - 1;
+                    && position.getY() < GameMapConstants.HALF_MAP_HEIGHT - 1;
 
             if (isInside && mapNode.getTerrainType() == TerrainType.GRASS) {
                 possibleCastlePositions.add(position);

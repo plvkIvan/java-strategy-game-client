@@ -155,7 +155,9 @@ public class GameLoop {
 
             if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
                 logger.info("Visited field milestone reached: {} different fields.", TARGET_VISITED_FIELDS);
-                System.out.println("Milestone reached: 16 different fields visited.");
+                System.out.println("Milestone reached: "
+                        + TARGET_VISITED_FIELDS
+                        + " different fields visited.");
                 printedMilestone = true;
             }
 
