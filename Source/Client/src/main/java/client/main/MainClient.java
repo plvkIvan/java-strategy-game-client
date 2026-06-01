@@ -1,5 +1,10 @@
 package client.main;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
 import client.app.ClientApplication;
 import client.config.ClientConfig;
 import client.exception.ClientException;
@@ -7,18 +12,17 @@ import client.exception.InvalidStartParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-
 public class MainClient {
 	private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
 
 	public static void main(String[] args) {
-		System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-		System.setErr(new PrintStream(System.err, true, StandardCharsets.UTF_8));
+		configureUtf8ConsoleOutput();
 
 		try {
 			runClient(args);
+		} catch (InvalidStartParameterException exception) {
+			logger.error("Client could not start because of invalid start parameters.", exception);
+			System.err.println(exception.getMessage());
 		} catch (ClientException exception) {
 			logger.error("Client stopped because of a recoverable client error.", exception);
 			System.err.println("Client error: " + exception.getMessage());
@@ -39,5 +43,23 @@ public class MainClient {
 
 		ClientApplication application = new ClientApplication(config);
 		application.run();
+	}
+
+	private static void configureUtf8ConsoleOutput() {
+		try {
+			System.setOut(new PrintStream(
+					new FileOutputStream(FileDescriptor.out),
+					true,
+					StandardCharsets.UTF_8
+			));
+
+			System.setErr(new PrintStream(
+					new FileOutputStream(FileDescriptor.err),
+					true,
+					StandardCharsets.UTF_8
+			));
+		} catch (RuntimeException exception) {
+			logger.warn("Could not configure UTF-8 console output.", exception);
+		}
 	}
 }
