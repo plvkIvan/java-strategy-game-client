@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="client.ui.view.LegendRendererTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-01T16:53:15" hostname="POLOVKO" time="0.004">
-  <properties/>
-  <testcase name="render_containsUtf8Emojis()" classname="client.ui.view.LegendRendererTest" time="0.001"/>
-  <testcase name="render_containsAllImportantLegendEntries()" classname="client.ui.view.LegendRendererTest" time="0.002"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
