@@ -4,6 +4,7 @@ import client.config.ClientConfig;
 import client.converter.HalfMapConverter;
 import client.domain.GameHalfMap;
 import client.exception.ClientException;
+import client.exception.InvalidGameStateException;
 import client.exception.NetworkCommunicationException;
 import client.logic.HalfMapGenerator;
 import client.logic.MovePlanner;
@@ -94,21 +95,26 @@ public class ClientApplication {
                     ownClientPlayerID
             );
 
-            if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.MustAct) {
+            if (ownPlayerState == null) {
+                logger.debug("Own player state was not found yet.");
+                sleep();
+                continue;
+            }
+
+            EPlayerGameState playerState = ownPlayerState.getState();
+
+            if (playerState == EPlayerGameState.MustAct) {
                 logger.info("Player is allowed to act. Half map upload can start.");
                 return currentGameState;
             }
 
-            if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Won) {
-                logger.warn("Player already won before half map upload.");
-                return currentGameState;
+            if (playerState == EPlayerGameState.Won || playerState == EPlayerGameState.Lost) {
+                throw new InvalidGameStateException(
+                        "Player reached terminal state before half map upload: " + playerState
+                );
             }
 
-            if (ownPlayerState != null && ownPlayerState.getState() == EPlayerGameState.Lost) {
-                logger.warn("Player already lost before half map upload.");
-                return currentGameState;
-            }
-
+            logger.debug("Player is not allowed to act yet. Current state: {}.", playerState);
             sleep();
         }
     }

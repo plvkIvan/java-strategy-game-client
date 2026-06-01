@@ -19,6 +19,7 @@ class ClientConfigTest {
         ClientConfig config = ClientConfig.fromArgs(args);
 
         assertTrue(config.isValid());
+        assertEquals("TR", config.getMode());
         assertEquals("http://swe1.wst.univie.ac.at:18235", config.getServerBaseUrl());
         assertEquals("game123", config.getGameId());
     }
@@ -38,6 +39,45 @@ class ClientConfigTest {
     @Test
     void fromArgs_withNullArguments_createsInvalidConfig() {
         ClientConfig config = ClientConfig.fromArgs(null);
+
+        assertFalse(config.isValid());
+    }
+
+    @Test
+    void fromArgs_withInvalidMode_createsInvalidConfig() {
+        String[] args = {
+                "DEMO",
+                "http://swe1.wst.univie.ac.at:18235",
+                "game123"
+        };
+
+        ClientConfig config = ClientConfig.fromArgs(args);
+
+        assertFalse(config.isValid());
+    }
+
+    @Test
+    void fromArgs_withBlankServerBaseUrl_createsInvalidConfig() {
+        String[] args = {
+                "TR",
+                " ",
+                "game123"
+        };
+
+        ClientConfig config = ClientConfig.fromArgs(args);
+
+        assertFalse(config.isValid());
+    }
+
+    @Test
+    void fromArgs_withBlankGameId_createsInvalidConfig() {
+        String[] args = {
+                "TR",
+                "http://swe1.wst.univie.ac.at:18235",
+                " "
+        };
+
+        ClientConfig config = ClientConfig.fromArgs(args);
 
         assertFalse(config.isValid());
     }

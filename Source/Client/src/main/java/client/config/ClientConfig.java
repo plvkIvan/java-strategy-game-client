@@ -1,6 +1,9 @@
 package client.config;
 
 public class ClientConfig {
+    private static final int MIN_REQUIRED_ARGUMENTS = 3;
+    private static final String TOURNAMENT_MODE = "TR";
+
     private final String mode;
     private final String serverBaseUrl;
     private final String gameId;
@@ -14,11 +17,21 @@ public class ClientConfig {
     }
 
     public static ClientConfig fromArgs(String[] args) {
-        if (args == null || args.length < 3) {
+        if (args == null || args.length < MIN_REQUIRED_ARGUMENTS) {
             return new ClientConfig(null, null, null, false);
         }
 
-        return new ClientConfig(args[0], args[1], args[2], true);
+        String mode = args[0];
+        String serverBaseUrl = args[1];
+        String gameId = args[2];
+
+        boolean valid = TOURNAMENT_MODE.equals(mode)
+                && serverBaseUrl != null
+                && !serverBaseUrl.isBlank()
+                && gameId != null
+                && !gameId.isBlank();
+
+        return new ClientConfig(mode, serverBaseUrl, gameId, valid);
     }
 
     public String getMode() {

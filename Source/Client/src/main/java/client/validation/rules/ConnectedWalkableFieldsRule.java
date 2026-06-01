@@ -1,7 +1,9 @@
 package client.validation.rules;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 
 import client.domain.GameHalfMap;
 import client.domain.MapNode;
@@ -31,22 +33,19 @@ public class ConnectedWalkableFieldsRule implements MapValidationRule {
             return;
         }
 
-        List<Position> queue = new ArrayList<>();
-        List<Position> visited = new ArrayList<>();
+        Queue<Position> queue = new ArrayDeque<>();
+        Set<Position> visited = new HashSet<>();
 
         queue.add(start);
         visited.add(start);
 
-        int index = 0;
-
-        while (index < queue.size()) {
-            Position current = queue.get(index++);
+        while (!queue.isEmpty()) {
+            Position current = queue.poll();
 
             for (Position neighbor : MapUtils.getNeighbors(current, width, height)) {
                 MapNode mapNode = gameHalfMap.getMapNode(neighbor);
 
-                if (mapNode != null && mapNode.isWalkable() && !visited.contains(neighbor)) {
-                    visited.add(neighbor);
+                if (mapNode != null && mapNode.isWalkable() && visited.add(neighbor)) {
                     queue.add(neighbor);
                 }
             }

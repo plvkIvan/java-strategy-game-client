@@ -7,8 +7,16 @@ import java.util.Map;
 public class FullGameMap {
     private final Map<Position, FullMapNodeInfo> mapNodes = new HashMap<>();
 
+    private int width = 0;
+    private int height = 0;
+
     public void addMapNode(FullMapNodeInfo mapNode) {
-        mapNodes.put(mapNode.getPosition(), mapNode);
+        Position position = mapNode.getPosition();
+
+        mapNodes.put(position, mapNode);
+
+        width = Math.max(width, position.getX() + 1);
+        height = Math.max(height, position.getY() + 1);
     }
 
     public FullMapNodeInfo getMapNode(Position position) {
@@ -24,27 +32,11 @@ public class FullGameMap {
     }
 
     public int getWidth() {
-        int maxX = 0;
-
-        for (FullMapNodeInfo node : mapNodes.values()) {
-            if (node.getPosition().getX() > maxX) {
-                maxX = node.getPosition().getX();
-            }
-        }
-
-        return maxX + 1;
+        return width;
     }
 
     public int getHeight() {
-        int maxY = 0;
-
-        for (FullMapNodeInfo node : mapNodes.values()) {
-            if (node.getPosition().getY() > maxY) {
-                maxY = node.getPosition().getY();
-            }
-        }
-
-        return maxY + 1;
+        return height;
     }
 
     public Position findMyPlayerPosition() {
