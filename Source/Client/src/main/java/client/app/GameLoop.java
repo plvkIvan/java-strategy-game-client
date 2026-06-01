@@ -154,10 +154,8 @@ public class GameLoop {
             gameStateAnalyzer.expandMountainVision(gameState, currentPosition, visitedPositions);
 
             if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
-                logger.info("Visited field milestone reached: {} different fields.", TARGET_VISITED_FIELDS);
-                System.out.println("Milestone reached: "
-                        + TARGET_VISITED_FIELDS
-                        + " different fields visited.");
+                logger.info("Visited field milestone reached: {} different fields.",
+                        TARGET_VISITED_FIELDS);
                 printedMilestone = true;
             }
 
@@ -246,7 +244,7 @@ public class GameLoop {
     private void sleep() {
         try {
             Thread.sleep(POLL_INTERVAL_MS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException exception) {
             logger.warn("Game loop sleep was interrupted.");
             Thread.currentThread().interrupt();
         }
