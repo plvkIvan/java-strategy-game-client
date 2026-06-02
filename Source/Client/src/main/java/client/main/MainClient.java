@@ -37,7 +37,7 @@ public class MainClient {
 
 		if (!config.isValid()) {
 			throw new InvalidStartParameterException(
-					"Not enough start parameters. Expected: <mode> <serverBaseUrl> <gameId>."
+					"Invalid start parameters. Expected: TR <serverBaseUrl> <gameId>."
 			);
 		}
 

@@ -44,12 +44,4 @@ public class ValidationNotificationCollector {
     public List<ValidationNotification> getNotifications() {
         return Collections.unmodifiableList(notifications);
     }
-
-    public void printErrorsToSystemErr() {
-        for (ValidationNotification notification : notifications) {
-            if (notification.getSeverity() == ValidationSeverity.ERROR) {
-                System.err.println(notification);
-            }
-        }
-    }
 }

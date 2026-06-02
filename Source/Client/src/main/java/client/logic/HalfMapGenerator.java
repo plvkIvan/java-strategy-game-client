@@ -13,6 +13,7 @@ import client.domain.TerrainType;
 import client.logic.mapgeneration.CastlePlacementTarget;
 import client.logic.mapgeneration.SafeRandomCastlePlacer;
 import client.logic.mapgeneration.StrategicCastlePlacer;
+import client.ui.view.ValidationNotificationRenderer;
 import client.validation.MapValidationRule;
 import client.validation.MapValidator;
 import client.validation.notification.ValidationNotificationCollector;
@@ -32,6 +33,8 @@ public class HalfMapGenerator {
     private final SafeRandomCastlePlacer randomCastlePlacer = new SafeRandomCastlePlacer(rand);
     private final StrategicCastlePlacer strategicCastlePlacer = new StrategicCastlePlacer(rand);
     private final MapValidator mapValidator = createMapValidator();
+    private final ValidationNotificationRenderer validationNotificationRenderer =
+            new ValidationNotificationRenderer();
 
     public GameHalfMap generate() {
         return generate(CastlePlacementTarget.ANY);
@@ -59,7 +62,7 @@ public class HalfMapGenerator {
             }
 
             logger.debug("Half map generation attempt {} failed validation.", attempt);
-            notifications.printErrorsToSystemErr();
+            validationNotificationRenderer.renderErrors(notifications);
         }
     }
 
