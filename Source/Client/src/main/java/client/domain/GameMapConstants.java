@@ -29,7 +29,7 @@ public final class GameMapConstants {
     public static final int CASTLE_BOTTOM_MIN_Y = HALF_MAP_HEIGHT - CASTLE_ZONE_HEIGHT;
     public static final int CASTLE_BOTTOM_MAX_Y = LAST_TOP_HALF_Y;
 
-    public static final int MIN_MOUNTAIN_FIELDS = 5;
+    public static final int MIN_MOUNTAIN_FIELDS = 8;
     public static final int MIN_WATER_FIELDS = 7;
     public static final int MIN_GRASS_FIELDS = 24;
 

@@ -53,6 +53,9 @@ public class GameLoop {
     private int turnCounter = 0;
     private Position lastKnownTreasurePosition = null;
 
+    private Position currentTarget = null;
+    private boolean previousTreasureCollected = false;
+
     public GameLoop(NetworkService networkService,
                     UniquePlayerIdentifier ownClientPlayerID,
                     GameStateAnalyzer gameStateAnalyzer,
@@ -156,7 +159,7 @@ public class GameLoop {
 
         updateVisitedPositions(gameState, currentPosition);
 
-        Position targetPosition = chooseTarget(gameSnapshot, ownPlayerState, currentPosition);
+        Position targetPosition = chooseStableTarget(gameSnapshot, ownPlayerState, currentPosition);
 
         if (targetPosition == null || targetPosition.equals(currentPosition)) {
             logger.debug("No useful target found for current position {}.", currentPosition);
@@ -164,6 +167,57 @@ public class GameLoop {
         }
 
         sendNextMove(gameSnapshot, currentPosition, targetPosition);
+    }
+
+    private Position chooseStableTarget(GameSnapshot gameSnapshot,
+                                        PlayerState ownPlayerState,
+                                        Position currentPosition) {
+        boolean treasureCollected = ownPlayerState.hasCollectedTreasure();
+
+        if (treasureCollected != previousTreasureCollected) {
+            currentTarget = null;
+            previousTreasureCollected = treasureCollected;
+            logger.debug("Treasure state changed. Current target was reset.");
+        }
+
+        Position bestTarget = chooseTarget(gameSnapshot, ownPlayerState, currentPosition);
+
+        if (bestTarget != null && isVisibleImportantTarget(gameSnapshot, bestTarget, treasureCollected)) {
+            currentTarget = bestTarget;
+            logger.debug("Visible important target selected: {}.", currentTarget);
+            return currentTarget;
+        }
+
+        if (currentTarget == null
+                || currentTarget.equals(currentPosition)
+                || !isTargetReachable(gameSnapshot, currentPosition, currentTarget)) {
+            currentTarget = bestTarget;
+            logger.debug("New stable target selected: {}.", currentTarget);
+        }
+
+        return currentTarget;
+    }
+
+    private boolean isTargetReachable(GameSnapshot gameSnapshot,
+                                      Position currentPosition,
+                                      Position targetPosition) {
+        return !pathFinder.findPath(gameSnapshot, currentPosition, targetPosition).isEmpty();
+    }
+
+    private boolean isVisibleImportantTarget(GameSnapshot gameSnapshot,
+                                             Position targetPosition,
+                                             boolean treasureCollected) {
+        FullMapNodeInfo node = gameSnapshot.getFullGameMap().getMapNode(targetPosition);
+
+        if (node == null) {
+            return false;
+        }
+
+        if (!treasureCollected && node.isMyTreasurePresent()) {
+            return true;
+        }
+
+        return treasureCollected && node.isEnemyFortPresent();
     }
 
     private void updateUi(GameSnapshot gameSnapshot,
