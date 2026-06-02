@@ -40,31 +40,10 @@ public class ClientApplication {
         );
 
         UniquePlayerIdentifier ownClientPlayerID = registerPlayer(networkService);
+        GameState gameStateBeforeMapUpload = waitUntilMustAct(networkService, ownClientPlayerID);
 
-        GameState gameStateBeforeMapUpload = waitUntilMustAct(
-                networkService,
-                ownClientPlayerID
-        );
-
-        generateAndSendHalfMap(
-                networkService,
-                ownClientPlayerID,
-                gameStateBeforeMapUpload
-        );
-
-        PathFinder pathFinder = new PathFinder();
-        MovePlanner movePlanner = new MovePlanner(pathFinder);
-
-        GameLoop gameLoop = new GameLoop(
-                networkService,
-                ownClientPlayerID,
-                gameStateAnalyzer,
-                pathFinder,
-                movePlanner
-        );
-
-        logger.info("Starting game loop.");
-        gameLoop.run();
+        generateAndSendHalfMap(networkService, ownClientPlayerID, gameStateBeforeMapUpload);
+        startGameLoop(networkService, ownClientPlayerID);
     }
 
     private UniquePlayerIdentifier registerPlayer(NetworkService networkService)
@@ -78,8 +57,6 @@ public class ClientApplication {
         );
 
         logger.info("Player registered successfully with id {}.", ownClientPlayerID);
-        System.out.println("Registration successful. Player ID: " + ownClientPlayerID);
-
         return ownClientPlayerID;
     }
 
@@ -136,9 +113,25 @@ public class ClientApplication {
 
         logger.info("Sending generated half map to server.");
         networkService.sendHalfMap(playerHalfMap);
-
         logger.info("Half map sent successfully.");
-        System.out.println("Half map sent successfully");
+    }
+
+    private void startGameLoop(NetworkService networkService,
+                               UniquePlayerIdentifier ownClientPlayerID)
+            throws NetworkCommunicationException {
+        PathFinder pathFinder = new PathFinder();
+        MovePlanner movePlanner = new MovePlanner(pathFinder);
+
+        GameLoop gameLoop = new GameLoop(
+                networkService,
+                ownClientPlayerID,
+                gameStateAnalyzer,
+                pathFinder,
+                movePlanner
+        );
+
+        logger.info("Starting game loop.");
+        gameLoop.run();
     }
 
     private void sleep() {

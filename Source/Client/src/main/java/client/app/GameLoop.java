@@ -4,10 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import client.converter.GameStateConverter;
+import client.converter.MoveConverter;
 import client.domain.FullMapNodeInfo;
 import client.domain.GameSnapshot;
+import client.domain.MoveDirection;
 import client.domain.Position;
 import client.exception.NetworkCommunicationException;
+import client.exception.NoReachablePathException;
 import client.logic.CastleSearch;
 import client.logic.MovePlanner;
 import client.logic.PathFinder;
@@ -20,7 +23,6 @@ import client.ui.view.CliGameView;
 import client.ui.view.LegendRenderer;
 import client.ui.view.MapRenderer;
 import messagesbase.UniquePlayerIdentifier;
-import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromserver.EPlayerGameState;
 import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
@@ -37,6 +39,7 @@ public class GameLoop {
     private final UniquePlayerIdentifier ownClientPlayerID;
     private final GameStateAnalyzer gameStateAnalyzer;
     private final GameStateConverter gameStateConverter;
+    private final MoveConverter moveConverter;
     private final PathFinder pathFinder;
     private final MovePlanner movePlanner;
     private final GameUiController gameUiController;
@@ -59,6 +62,7 @@ public class GameLoop {
         this.ownClientPlayerID = ownClientPlayerID;
         this.gameStateAnalyzer = gameStateAnalyzer;
         this.gameStateConverter = new GameStateConverter();
+        this.moveConverter = new MoveConverter();
         this.pathFinder = pathFinder;
         this.movePlanner = movePlanner;
         this.gameUiController = createGameUiController();
@@ -86,47 +90,12 @@ public class GameLoop {
 
             updateLastKnownTreasurePosition(gameSnapshot, ownPlayerState, currentPosition);
 
-            if (ownPlayerState.getState() == EPlayerGameState.Won) {
-                gameUiController.update(
-                        gameSnapshot,
-                        lastKnownTreasurePosition,
-                        ownPlayerState.hasCollectedTreasure(),
-                        true,
-                        false,
-                        turnCounter
-                );
-
-                logger.info("Game finished with result WON after {} turns.", turnCounter);
-                System.out.println("Game won.");
+            if (handleTerminalState(gameSnapshot, ownPlayerState)) {
                 return;
             }
 
-            if (ownPlayerState.getState() == EPlayerGameState.Lost) {
-                gameUiController.update(
-                        gameSnapshot,
-                        lastKnownTreasurePosition,
-                        ownPlayerState.hasCollectedTreasure(),
-                        false,
-                        true,
-                        turnCounter
-                );
-
-                logger.info("Game finished with result LOST after {} turns.", turnCounter);
-                System.out.println("Game lost.");
-                return;
-            }
-
-            if (ownHalfPositions == null) {
-                ownHalfPositions = gameStateAnalyzer.determineOwnHalf(gameState);
-
-                if (ownHalfPositions == null) {
-                    logger.debug("Own half could not be determined yet.");
-                    continue;
-                }
-
-                logger.info("Own half determined with {} positions.", ownHalfPositions.size());
-                treasureSearch = new TreasureSearch(ownHalfPositions);
-                castleSearch = new CastleSearch(ownHalfPositions);
+            if (!initializeOwnHalfIfNeeded(gameState)) {
+                continue;
             }
 
             if (ownPlayerState.getState() == EPlayerGameState.MustWait) {
@@ -134,69 +103,132 @@ public class GameLoop {
                 continue;
             }
 
-            turnCounter++;
+            handleMustActTurn(gameState, gameSnapshot, ownPlayerState, currentPosition);
+        }
+    }
 
-            gameUiController.update(
+    private boolean handleTerminalState(GameSnapshot gameSnapshot, PlayerState ownPlayerState) {
+        if (ownPlayerState.getState() == EPlayerGameState.Won) {
+            updateUi(gameSnapshot, ownPlayerState, true, false);
+            logger.info("Game finished with result WON after {} turns.", turnCounter);
+            return true;
+        }
+
+        if (ownPlayerState.getState() == EPlayerGameState.Lost) {
+            updateUi(gameSnapshot, ownPlayerState, false, true);
+            logger.info("Game finished with result LOST after {} turns.", turnCounter);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean initializeOwnHalfIfNeeded(GameState gameState) {
+        if (ownHalfPositions != null) {
+            return true;
+        }
+
+        ownHalfPositions = gameStateAnalyzer.determineOwnHalf(gameState);
+
+        if (ownHalfPositions == null) {
+            logger.debug("Own half could not be determined yet.");
+            return false;
+        }
+
+        logger.info("Own half determined with {} positions.", ownHalfPositions.size());
+        treasureSearch = new TreasureSearch(ownHalfPositions);
+        castleSearch = new CastleSearch(ownHalfPositions);
+        return true;
+    }
+
+    private void handleMustActTurn(GameState gameState,
+                                   GameSnapshot gameSnapshot,
+                                   PlayerState ownPlayerState,
+                                   Position currentPosition)
+            throws NetworkCommunicationException {
+        turnCounter++;
+        updateUi(gameSnapshot, ownPlayerState, false, false);
+
+        if (currentPosition == null) {
+            logger.warn("Current player position could not be determined.");
+            return;
+        }
+
+        updateVisitedPositions(gameState, currentPosition);
+
+        Position targetPosition = chooseTarget(gameSnapshot, ownPlayerState, currentPosition);
+
+        if (targetPosition == null || targetPosition.equals(currentPosition)) {
+            logger.debug("No useful target found for current position {}.", currentPosition);
+            return;
+        }
+
+        sendNextMove(gameSnapshot, currentPosition, targetPosition);
+    }
+
+    private void updateUi(GameSnapshot gameSnapshot,
+                          PlayerState ownPlayerState,
+                          boolean gameWon,
+                          boolean gameLost) {
+        gameUiController.update(
+                gameSnapshot,
+                lastKnownTreasurePosition,
+                ownPlayerState.hasCollectedTreasure(),
+                gameWon,
+                gameLost,
+                turnCounter
+        );
+    }
+
+    private void updateVisitedPositions(GameState gameState, Position currentPosition) {
+        visitedPositions.add(currentPosition);
+        gameStateAnalyzer.expandMountainVision(gameState, currentPosition, visitedPositions);
+
+        if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
+            logger.info("Visited field milestone reached: {} different fields.", TARGET_VISITED_FIELDS);
+            printedMilestone = true;
+        }
+    }
+
+    private Position chooseTarget(GameSnapshot gameSnapshot,
+                                  PlayerState ownPlayerState,
+                                  Position currentPosition) {
+        if (ownPlayerState.hasCollectedTreasure()) {
+            return castleSearch.chooseTarget(
                     gameSnapshot,
-                    lastKnownTreasurePosition,
-                    ownPlayerState.hasCollectedTreasure(),
-                    false,
-                    false,
-                    turnCounter
+                    currentPosition,
+                    visitedPositions,
+                    pathFinder
+            );
+        }
+
+        return treasureSearch.chooseTarget(
+                gameSnapshot,
+                currentPosition,
+                visitedPositions,
+                pathFinder
+        );
+    }
+
+    private void sendNextMove(GameSnapshot gameSnapshot,
+                              Position currentPosition,
+                              Position targetPosition)
+            throws NetworkCommunicationException {
+        try {
+            MoveDirection moveDirection = movePlanner.planNextMove(
+                    gameSnapshot,
+                    currentPosition,
+                    targetPosition
             );
 
-            if (currentPosition == null) {
-                logger.warn("Current player position could not be determined.");
-                continue;
-            }
-
-            visitedPositions.add(currentPosition);
-            gameStateAnalyzer.expandMountainVision(gameState, currentPosition, visitedPositions);
-
-            if (!printedMilestone && visitedPositions.size() >= TARGET_VISITED_FIELDS) {
-                logger.info("Visited field milestone reached: {} different fields.",
-                        TARGET_VISITED_FIELDS);
-                printedMilestone = true;
-            }
-
-            Position targetPosition;
-
-            if (ownPlayerState.hasCollectedTreasure()) {
-                targetPosition = castleSearch.chooseTarget(
-                        gameSnapshot,
-                        currentPosition,
-                        visitedPositions,
-                        pathFinder
-                );
-            } else {
-                targetPosition = treasureSearch.chooseTarget(
-                        gameSnapshot,
-                        currentPosition,
-                        visitedPositions,
-                        pathFinder
-                );
-            }
-
-            if (targetPosition == null || targetPosition.equals(currentPosition)) {
-                logger.debug("No useful target found for current position {}.", currentPosition);
-                continue;
-            }
-
-            EMove move = movePlanner.planNextMove(gameSnapshot, currentPosition, targetPosition);
-
-            if (move == null) {
-                logger.warn("Move planner could not determine a move from {} to {}.",
-                        currentPosition,
-                        targetPosition);
-                continue;
-            }
-
             logger.debug("Sending move {} from {} towards target {}.",
-                    move,
+                    moveDirection,
                     currentPosition,
                     targetPosition);
 
-            networkService.sendMove(ownClientPlayerID, move);
+            networkService.sendMove(ownClientPlayerID, moveConverter.toDto(moveDirection));
+        } catch (NoReachablePathException exception) {
+            logger.warn("Move could not be planned.", exception);
         }
     }
 
