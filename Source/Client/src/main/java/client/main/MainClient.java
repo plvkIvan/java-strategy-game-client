@@ -18,6 +18,9 @@ public class MainClient {
 	public static void main(String[] args) {
 		configureUtf8ConsoleOutput();
 
+		logger.trace("MainClient received {} start parameter(s).",
+				args == null ? 0 : args.length);
+
 		try {
 			runClient(args);
 		} catch (InvalidStartParameterException exception) {
@@ -34,6 +37,11 @@ public class MainClient {
 
 	private static void runClient(String[] args) throws ClientException {
 		ClientConfig config = ClientConfig.fromArgs(args);
+
+		logger.trace("Start parameters parsed. Mode: {}, serverBaseUrl: {}, gameId: {}.",
+				config.getMode(),
+				config.getServerBaseUrl(),
+				config.getGameId());
 
 		if (!config.isValid()) {
 			throw new InvalidStartParameterException(
