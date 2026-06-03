@@ -11,6 +11,7 @@
 
     <!-- We can set the logging behaviour for specific packages, e.g. package "client" and its sub-packages -->
     <logger name="client" level="TRACE"/>
+    <logger name="client.logic.PathFinder" level="INFO"/>
 
     <!-- We can even control the logging behaviour for other libaries thanks to SLF4J -->
     <!-- The logger configurations below significantly reduces the very chatty output of webflux -->

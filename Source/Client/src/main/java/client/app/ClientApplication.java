@@ -12,6 +12,7 @@ import client.logic.PathFinder;
 import client.logic.mapgeneration.CastlePlacementTarget;
 import client.network.NetworkService;
 import client.state.GameStateAnalyzer;
+import client.ui.view.HalfMapRenderer;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromserver.EPlayerGameState;
@@ -25,10 +26,12 @@ public class ClientApplication {
 
     private final ClientConfig config;
     private final GameStateAnalyzer gameStateAnalyzer;
+    private final HalfMapRenderer halfMapRenderer;
 
     public ClientApplication(ClientConfig config) {
         this.config = config;
         this.gameStateAnalyzer = new GameStateAnalyzer();
+        this.halfMapRenderer = new HalfMapRenderer();
     }
 
     public void run() throws ClientException {
@@ -107,6 +110,8 @@ public class ClientApplication {
 
         HalfMapGenerator halfMapGenerator = new HalfMapGenerator();
         GameHalfMap gameHalfMap = halfMapGenerator.generate(castlePlacementTarget);
+
+        halfMapRenderer.renderGeneratedHalfMap(gameHalfMap, castlePlacementTarget);
 
         HalfMapConverter halfMapConverter = new HalfMapConverter();
         PlayerHalfMap playerHalfMap = halfMapConverter.toDto(gameHalfMap, ownClientPlayerID);
