@@ -159,17 +159,31 @@ class GameStateAnalyzerTest {
     }
 
     @Test
-    void expandMountainVision_whenCurrentPositionIsMountain_addsNeighborPositions() {
-        FullMapNode mountainNode = new FullMapNode(
-                ETerrain.Mountain,
-                EPlayerPositionState.MyPlayerPosition,
-                ETreasureState.NoOrUnknownTreasureState,
-                EFortState.NoOrUnknownFortState,
-                5,
-                5
-        );
+    void expandMountainVision_whenCurrentPositionIsMountain_addsKnownNeighborPositions() {
+        List<FullMapNode> mapNodes = new ArrayList<>();
 
-        GameState gameState = createGameStateWithNodes(List.of(mountainNode));
+        for (int x = 4; x <= 6; x++) {
+            for (int y = 4; y <= 6; y++) {
+                ETerrain terrain = x == 5 && y == 5
+                        ? ETerrain.Mountain
+                        : ETerrain.Grass;
+
+                EPlayerPositionState playerPositionState = x == 5 && y == 5
+                        ? EPlayerPositionState.MyPlayerPosition
+                        : EPlayerPositionState.NoPlayerPresent;
+
+                mapNodes.add(new FullMapNode(
+                        terrain,
+                        playerPositionState,
+                        ETreasureState.NoOrUnknownTreasureState,
+                        EFortState.NoOrUnknownFortState,
+                        x,
+                        y
+                ));
+            }
+        }
+
+        GameState gameState = createGameStateWithNodes(mapNodes);
         Set<Position> visitedPositions = new HashSet<>();
         Position currentPosition = new Position(5, 5);
 

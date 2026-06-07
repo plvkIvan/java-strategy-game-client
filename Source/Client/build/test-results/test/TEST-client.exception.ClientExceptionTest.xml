@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="client.exception.ClientExceptionTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-06-07T15:02:40" hostname="POLOVKO" time="0.027">
+  <properties/>
+  <testcase name="invalidGameStateException_isRuntimeException()" classname="client.exception.ClientExceptionTest" time="0.004"/>
+  <testcase name="uncheckedExceptions_withCause_storeCause()" classname="client.exception.ClientExceptionTest" time="0.003"/>
+  <testcase name="networkCommunicationException_withCause_storesCause()" classname="client.exception.ClientExceptionTest" time="0.003"/>
+  <testcase name="clientException_withMessageAndCause_storesMessageAndCause()" classname="client.exception.ClientExceptionTest" time="0.001"/>
+  <testcase name="networkCommunicationException_isClientException()" classname="client.exception.ClientExceptionTest" time="0.001"/>
+  <testcase name="invalidStartParameterException_isRuntimeException()" classname="client.exception.ClientExceptionTest" time="0.003"/>
+  <testcase name="clientException_withMessage_storesMessage()" classname="client.exception.ClientExceptionTest" time="0.001"/>
+  <testcase name="noReachablePathException_isRuntimeException()" classname="client.exception.ClientExceptionTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

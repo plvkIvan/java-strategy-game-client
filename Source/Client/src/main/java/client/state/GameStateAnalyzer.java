@@ -102,26 +102,48 @@ public class GameStateAnalyzer {
     public void expandMountainVision(GameState gameState,
                                      Position currentPosition,
                                      Set<Position> visitedPositions) {
+        Set<Position> knownMapPositions = collectKnownMapPositions(gameState);
+
         for (FullMapNode node : gameState.getMap().getMapNodes()) {
             if (node.getX() == currentPosition.getX()
                     && node.getY() == currentPosition.getY()) {
 
                 if (node.getTerrain() == ETerrain.Mountain) {
-                    for (int dx = -1; dx <= 1; dx++) {
-                        for (int dy = -1; dy <= 1; dy++) {
-                            if (dx == 0 && dy == 0) {
-                                continue;
-                            }
-
-                            visitedPositions.add(new Position(
-                                    currentPosition.getX() + dx,
-                                    currentPosition.getY() + dy
-                            ));
-                        }
-                    }
+                    addVisibleMountainNeighbors(currentPosition, visitedPositions, knownMapPositions);
                 }
 
                 break;
+            }
+        }
+    }
+
+    private Set<Position> collectKnownMapPositions(GameState gameState) {
+        Set<Position> knownMapPositions = new HashSet<>();
+
+        for (FullMapNode node : gameState.getMap().getMapNodes()) {
+            knownMapPositions.add(new Position(node.getX(), node.getY()));
+        }
+
+        return knownMapPositions;
+    }
+
+    private void addVisibleMountainNeighbors(Position currentPosition,
+                                             Set<Position> visitedPositions,
+                                             Set<Position> knownMapPositions) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+
+                Position visiblePosition = new Position(
+                        currentPosition.getX() + dx,
+                        currentPosition.getY() + dy
+                );
+
+                if (knownMapPositions.contains(visiblePosition)) {
+                    visitedPositions.add(visiblePosition);
+                }
             }
         }
     }

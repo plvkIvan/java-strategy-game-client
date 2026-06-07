@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 public class HalfMapGenerator {
     private static final Logger logger = LoggerFactory.getLogger(HalfMapGenerator.class);
 
+    private static final int MAX_GENERATION_ATTEMPTS = 1000;
+    private static final int GENERATION_WARNING_INTERVAL = 100;
+
     private final Random rand = new Random();
 
     private final SafeRandomCastlePlacer randomCastlePlacer = new SafeRandomCastlePlacer(rand);
@@ -41,14 +44,12 @@ public class HalfMapGenerator {
     }
 
     public GameHalfMap generate(CastlePlacementTarget castlePlacementTarget) {
-        int attempt = 0;
-
-        while (true) {
-            attempt++;
+        for (int attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
             GameHalfMap gameHalfMap = generateCandidate(castlePlacementTarget);
 
             if (gameHalfMap == null) {
                 logger.debug("Half map generation attempt {} produced no castle position.", attempt);
+                logRepeatedGenerationFailures(attempt, castlePlacementTarget);
                 continue;
             }
 
@@ -63,6 +64,24 @@ public class HalfMapGenerator {
 
             logger.debug("Half map generation attempt {} failed validation.", attempt);
             validationNotificationRenderer.renderErrors(notifications);
+            logRepeatedGenerationFailures(attempt, castlePlacementTarget);
+        }
+
+        throw new IllegalStateException(
+                "Could not generate a valid half map after "
+                        + MAX_GENERATION_ATTEMPTS
+                        + " attempts for castle target "
+                        + castlePlacementTarget
+                        + "."
+        );
+    }
+
+    private void logRepeatedGenerationFailures(int attempt,
+                                               CastlePlacementTarget castlePlacementTarget) {
+        if (attempt % GENERATION_WARNING_INTERVAL == 0) {
+            logger.warn("Half map generation still unsuccessful after {} attempt(s) with castle target {}.",
+                    attempt,
+                    castlePlacementTarget);
         }
     }
 

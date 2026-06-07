@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="client.logic.MovePlannerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-07T15:02:40" hostname="POLOVKO" time="0.005">
+  <properties/>
+  <testcase name="adjacentRight_returnsMoveRight()" classname="client.logic.MovePlannerTest" time="0.001"/>
+  <testcase name="unreachableTarget_throwsNoReachablePathException()" classname="client.logic.MovePlannerTest" time="0.004"/>
+  <system-out><![CDATA[17:02:40.730 [Test worker] WARN  client.logic.PathFinder - No path found from (0,0) to (2,0).
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
