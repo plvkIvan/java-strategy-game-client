@@ -1,10 +1,11 @@
 package client.ui.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import client.domain.FullGameMap;
 import client.ui.observer.Observer;
 import org.junit.jupiter.api.Test;
 
@@ -14,20 +15,21 @@ class GameUiModelMockitoTest {
     void update_notifiesObserverWithMockito() {
         GameUiModel model = new GameUiModel();
         Observer<GameUiSnapshot> observer = createObserverMock();
-        GameUiSnapshot snapshot = createSnapshot();
+        GameUiSnapshot snapshot = createSnapshotMockWithTurnCounter(1);
 
         model.addGameStateObserver(observer);
 
         model.update(snapshot);
 
         verify(observer).update(snapshot);
+        assertEquals(1, model.getCurrentSnapshot().getTurnCounter());
     }
 
     @Test
     void update_doesNotNotifyRemovedObserverWithMockito() {
         GameUiModel model = new GameUiModel();
         Observer<GameUiSnapshot> observer = createObserverMock();
-        GameUiSnapshot snapshot = createSnapshot();
+        GameUiSnapshot snapshot = createSnapshotMockWithTurnCounter(2);
 
         model.addGameStateObserver(observer);
         model.removeGameStateObserver(observer);
@@ -35,6 +37,7 @@ class GameUiModelMockitoTest {
         model.update(snapshot);
 
         verify(observer, never()).update(snapshot);
+        assertEquals(2, model.getCurrentSnapshot().getTurnCounter());
     }
 
     @SuppressWarnings("unchecked")
@@ -42,16 +45,9 @@ class GameUiModelMockitoTest {
         return mock(Observer.class);
     }
 
-    private GameUiSnapshot createSnapshot() {
-        return new GameUiSnapshot(
-                new FullGameMap(),
-                null,
-                null,
-                null,
-                false,
-                false,
-                false,
-                1
-        );
+    private GameUiSnapshot createSnapshotMockWithTurnCounter(int turnCounter) {
+        GameUiSnapshot snapshot = mock(GameUiSnapshot.class);
+        when(snapshot.getTurnCounter()).thenReturn(turnCounter);
+        return snapshot;
     }
 }
