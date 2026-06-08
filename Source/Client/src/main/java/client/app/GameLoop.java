@@ -1,6 +1,7 @@
 package client.app;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import client.converter.GameStateConverter;
@@ -248,6 +249,11 @@ public class GameLoop {
                                   PlayerState ownPlayerState,
                                   Position currentPosition) {
         if (ownPlayerState.hasCollectedTreasure()) {
+            Objects.requireNonNull(
+                    castleSearch,
+                    "Castle search must be initialized before choosing a target."
+            );
+
             return castleSearch.chooseTarget(
                     gameSnapshot,
                     currentPosition,
@@ -255,6 +261,11 @@ public class GameLoop {
                     pathFinder
             );
         }
+
+        Objects.requireNonNull(
+                treasureSearch,
+                "Treasure search must be initialized before choosing a target."
+        );
 
         return treasureSearch.chooseTarget(
                 gameSnapshot,
